@@ -70,9 +70,9 @@ int main(){
                 break;
             }
         }
-        if(flag==1)break;
+        if(flag==1)break; 
 
-        head++;
+        head++ ;//123
     }
 
     //打印最后一个点步数
