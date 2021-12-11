@@ -21,6 +21,6 @@ int main(){
                     {1,1}};//youshang
     
     int head,tail;
-    int i,j,k,n,m,startx,starty,p,q,tx
+    int i,j,k,n,m,startx,starty,p,q,tx          
 }
 
