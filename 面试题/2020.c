@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 //全局变量初始化默认i是0，i--变成-1
 //sizeof()结果为无符号
 //有符号和无符号比较全转无符号，而-1转成无符号
-//10000000 00000000 00000000 00000001
+//11111
 //开头的1不再表示符号
 //显然大于sizeof(i)=4
 
@@ -192,7 +192,7 @@ int main(int argc, char *argv[])
 
 
 //*10
-#if 0
+#if 1
 #include<stdio.h>
 int main(int argc, char *argv[])
 {
@@ -244,7 +244,7 @@ int main(int argc, char *argv[])
 //*12       
 
 
-
+/*
 //*13
 #include<stdio.h>
 void sort(int arr[], int size)
@@ -263,6 +263,8 @@ void sort(int arr[], int size)
  }
  }
 }
+
+*/
 
 
 
