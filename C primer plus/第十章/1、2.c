@@ -1,6 +1,6 @@
 //*数组
 /*
-//!1//见书
+
 #if 1
 #include<stdio.h>
 #define MONTHS 12
