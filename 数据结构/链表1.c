@@ -30,11 +30,18 @@ Node *createLink(){
         head->next=pNew;
     }
     return head;
-
-
-
 }
+Node *createLinkTail(){
+    Node*head=(Node *)malloc(sizeof(Node));
+    head->next=NULL;
 
+    Node*tail=NULL;
+    tail=head;
+    int x;
+
+    //当输入-1时，停止建立
+    while(scanf("%d",&x)&&x!=-1)
+}
 
 
 }
