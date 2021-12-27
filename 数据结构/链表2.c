@@ -87,6 +87,46 @@ void OutPut(LinkList head){
     }
 }
 
+//*插入
+void Insert(LinkList head,int i){//第几个位置
+    Node *p=head,*s;
+
+    int j=0;//?怎么老喜欢用while
+    while(j<i-1 && p){
+        p=p->next;
+        j++;
+    }//找到第i-1个结点的地址p
+    if(p){
+        printf("请输入待添加学生的姓名和学号：\n");
+        s=(Node*)malloc(sizeof(Node));
+        scanf("%s",s->name);
+        scanf("%d",&s->number);
+        
+        s->next=p->next;//next相当该节点的下一个结点，类似于a[i++]
+        p->next=s;//p直接代表了那块内存 
+    }
+}
+//*表首添加结点
+//*表尾添加结点
+
+//*删除
+void Delete(LinkList head,int pos){
+    Node *p=head,*q;
+    int j=0;
+    printf("\n********************删除第%d个学生*********************\n",pos);
+    while(j<pos-1&&p){
+        p=p->next;
+        j++;
+    }
+    if(p==NULL||p->next==NULL)
+        printf("the position is ERROR!");
+    else{
+        q=p->next;
+        p->next=q->next;
+        free(q);
+    }
+}
+
 int main(){
     LinkList ha,hb;
     //ha=InitList();
@@ -96,4 +136,8 @@ int main(){
     hb=InitList();
     CreatByRear(hb);
     OutPut(hb);
+    Insert(ha,3);
+    OutPut(ha);
+    Delete(ha,4);
+    OutPut(ha);
 }
