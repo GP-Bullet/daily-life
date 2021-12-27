@@ -2,9 +2,9 @@
 #include<stdlib.h>
 int main(){
 
-typedef struct node{
+typedef struct a{
     int data;
-    struct node*next;
+    struct a*next;
 }Node;
 
 //创建头结点
@@ -16,7 +16,7 @@ Node*pNew=(Node*)malloc(sizeof(Node));
 pNew->data=123;
 
 //头插法
-Node *createLink(){
+
     //创建头结点
     Node *head=(Node *)malloc(sizeof(Node));
     head->next=NULL;
@@ -31,7 +31,10 @@ Node *createLink(){
     }
     return head;
 }
-Node *createLinkTail(){
+
+
+//尾插
+
     Node*head=(Node *)malloc(sizeof(Node));
     head->next=NULL;
 
@@ -40,8 +43,13 @@ Node *createLinkTail(){
     int x;
 
     //当输入-1时，停止建立
-    while(scanf("%d",&x)&&x!=-1)
-}
+    while(scanf("%d",&x)&&x!=-1){
+    Node *pNew=(Node *)malloc(sizeof(Node));
+    pNew->data=x;
+
+
+    } 
+
 
 
 }
