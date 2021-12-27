@@ -1,5 +1,5 @@
 //链表的初始化、创建和输出
-
+//和数组对应起来
 #include<stdlib.h>
 #include<stdio.h>
 #include<string.h>
@@ -80,7 +80,9 @@ void CreatByHead(LinkList head){
 void OutPut(LinkList head){
     Node *p;
     p=head->next;
+    printf("学生信息如下\n");
     while(p){
+        
         printf("姓名：%s\n",p->name);
         printf("学号：%d\n\n",p->number);
         p=p->next;
@@ -127,17 +129,61 @@ void Delete(LinkList head,int pos){
     }
 }
 
-int main(){
-    LinkList ha,hb;
-    //ha=InitList();
-    //CreatByHead(ha);
-    //OutPut(ha);
-
-    hb=InitList();
-    CreatByRear(hb);
-    OutPut(hb);
-    Insert(ha,3);
-    OutPut(ha);
-    Delete(ha,4);
-    OutPut(ha);
+//*查询
+Node *Search(LinkList head,char name[]){//?[]可以吗
+    Node *p=head->next;
+    while(p){
+        if(strcmp(p->name,name)!=0){
+            p=p->next;
+        }else{
+            break;}
+    }
+    if(p==NULL)
+        printf("没有找到值为%s的结点！\n",name);
+    return p;
 }
+
+//*长度
+int ListLength(LinkList head){
+    int count=0;
+    Node *p;
+    p=head->next;
+    while(p){
+        count++;
+        p=p->next;
+    }
+    return count;
+}
+
+int main(){
+    LinkList ha;
+  //  LinkList hb;
+    //hb=InitList();
+    //CreatByHead(hb);
+    //OutPut(hb);
+    Node*p;
+    ha=InitList();
+    CreatByRear(ha);
+    OutPut(ha);
+
+    Insert(ha,1);
+    OutPut(ha);
+
+    printf("\n共有%d条学生消息\n",ListLength(ha));
+//    Delete(ha,4);Z
+//    OutPut(ha);
+
+
+    p=Search(ha,(char*)"马梁川");//需要判断
+    if(p!=NULL){
+        printf("\n*****************查找到的信息如下*************\n");
+        printf("姓名： %s\n",p->name);
+        printf("学号: %d\n\n",p->number);
+    }
+
+
+    
+    
+}
+
+//咋会输完按回车出错呢
