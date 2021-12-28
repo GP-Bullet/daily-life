@@ -56,9 +56,20 @@ void keydown(){
             break;
 
     }
+    write(ha,"1.txt");
 
 int main(){
-    
+    LinkList ha;
+
+    Node*p;
+    ha=
+    read(ha,"1.txt");
+    while(1){
+
+        menu();
+        keydown();
+
+    }
+    return 0;
 }
 
-}

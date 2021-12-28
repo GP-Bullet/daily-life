@@ -171,6 +171,35 @@ int ListLength(LinkList head){
 
 
 //文件读操作
+void read(Node*head,char* filename){
+    //1、打开文件
+    FILE*fp;
+
+    fp=fopen(filename,"r");
+    if(fp==NULL){
+        fopen(filename,"w+");
+    }
+    //2read
+    while()
+
+
+
+    //3.close
+    fclose(fp);
+
+}
+
+void write(Node*head,char*filename){
+    //1.打开文件
+    FILE*fp;
+    fp=fopen(filename,"w");
+
+    //2.写文件
+    while()
+
+    //3.关闭文件
+    fclose(fp);
+}
 
 
 int main(){

@@ -6,7 +6,7 @@ struct node//结构标记{
 
 
 typedef struct node{
-    int date1;
+    int date1;  
     int dade2;
 }Node;//分号结尾//新的类型名
 
