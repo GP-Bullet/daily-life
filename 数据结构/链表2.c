@@ -110,6 +110,19 @@ void Insert(LinkList head,int i){//第几个位置
 }
 //*表首添加结点
 //*表尾添加结点
+void InsertRear(LinkList head){
+    Node*p=head,*s;
+    while(p && p->next)
+        p=p->next;
+    if(p){
+        printf("请输入待添加学生的姓名和学号:\n");
+        s=(Node*)malloc(sizeof(Node));
+        scanf("%s",s->name);
+        scanf("%d",&s->number);
+        p->next=s;
+        s->next=NULL;
+    }
+}
 
 //*删除
 void Delete(LinkList head,int pos){
@@ -154,6 +167,11 @@ int ListLength(LinkList head){
     }
     return count;
 }
+
+
+
+//文件读操作
+
 
 int main(){
     LinkList ha;
