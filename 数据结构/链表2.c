@@ -216,17 +216,11 @@ int main(){
     Insert(ha,1);
     OutPut(ha);
 
-    printf("\n共有%d条学生消息\n",ListLength(ha));
+    
 //    Delete(ha,4);Z
 //    OutPut(ha);
 
 
-    p=Search(ha,(char*)"马梁川");//需要判断
-    if(p!=NULL){
-        printf("\n*****************查找到的信息如下*************\n");
-        printf("姓名： %s\n",p->name);
-        printf("学号: %d\n\n",p->number);
-    }
 
 
     

@@ -15,13 +15,10 @@ void menu(){
 	printf("------------------------------------------------\n");
 	
 }
-
-Node*list;
+LinkList ha;
 
 void keydown(){
     int choice=0;
-    struct student data;
-    Node* pMove=NULL;
     scanf("%d",&choice);
     switch(choice){
         case 0:
@@ -41,15 +38,24 @@ void keydown(){
             break;
         case 3:
             printf("------------------删除信息-------------------\n");
-            Delete(ha,);//pos
+            int n;
+            printf("要删除第几条信息?");
+            scanf("%d",&n);
+            Delete(ha,n);//pos
             break;
         case 4:
             printf("------------------查找信息-------------------\n");
-            Search(ha,);//姓名
+            Search(ha,"马梁川");//姓名
+            Node*p;
+            if(p!=NULL){
+            printf("\n*****************查找到的信息如下*************\n");
+            printf("姓名： %s\n",p->name);
+            printf("学号: %d\n\n",p->number);
+    }
             break;
         case 5:
             printf("-------------------总信息数------------------\n");
-            ListLength(ha);
+            printf("\n共有%d条学生消息\n",ListLength(ha));
             break;
         default:
             printf("选择错误，重新输入\n");
@@ -59,17 +65,22 @@ void keydown(){
     write(ha,"1.txt");
 
 int main(){
-    LinkList ha;
+    
 
     Node*p;
-    ha=
+    ha=InitList();
+    CreatByRear(ha);
     read(ha,"1.txt");
+
+
     while(1){
 
         menu();
         keydown();
-
+        getchar();
     }
+    getchar();
+
     return 0;
 }
 

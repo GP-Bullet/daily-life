@@ -3,13 +3,14 @@
 #include<string.h>
 
 
-typedef struct stu{
+struct stu{
     char num[20];
     char name[40];
     char sex[5];
-}Node;
+};
+
 int main(){
-    Node class[40];
+    struct stu class[40];
     FILE*fp;
     int i;
     printf("\n输入该班的数据：\n");
@@ -40,8 +41,6 @@ int main(){
         i++;
     }
     fclose(fp);
-
-
-    return 0;
-
+  
+return 0;
 }
