@@ -4,7 +4,7 @@
 #include<stdio.h>
 #include<string.h>
 
-//链表占的内存？
+
 
 
 typedef struct node{
@@ -227,4 +227,3 @@ int main(){
     
 }
 
-//咋会输完按回车出错呢

@@ -1,4 +1,4 @@
-/*//阶乘
+//阶乘
 //高精度算法
 #include<stdio.h>
 int main(){
@@ -128,10 +128,7 @@ int main(){
 //a[i] = a[i] * d + jinwei;    //运算 
 //		jinwei = a[i] / 10;      //进位 
 //		a[i] %= 10;
-*/
-#include<stdio.h>
-int main(){ 
-}
+
 
 
 

@@ -76,9 +76,7 @@ int main(){
 		
 		menu();
 		keyDown();
-		system("pause");
-		system("cls");
+
 	} 
-	system("pause");
 	return 0;
 }

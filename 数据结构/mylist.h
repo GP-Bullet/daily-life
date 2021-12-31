@@ -2,7 +2,8 @@
 #include<stdlib.h> 
 #include<string.h> 
 
-//数据的设计-----》学生信息抽象出
+//数据的设计----
+
 struct student{
 	char name[20];
 	int age;
