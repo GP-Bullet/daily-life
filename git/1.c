@@ -74,7 +74,7 @@ git cherry-pick <提交号>...
 (当前所在的位置（HEAD）)
 如果你想将一些提交复制到当前所在的位置（HEAD）下面的话
 
-git cherry-pick C2 C4抓过来复制到当前
+!git cherry-pick C2 C4抓过来复制到当前
 （有选择性的复制）
 
 交互式的 rebase
@@ -82,6 +82,7 @@ git cherry-pick C2 C4抓过来复制到当前
 
 git rebase -i HEAD~4
 (jiaohu)
+pick OR OMIT
 
 
 */
