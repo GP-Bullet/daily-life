@@ -39,9 +39,8 @@ HEAD->C1
 ~<num>
 git checkout main^
 
-git branch -f main HEAD~3
+!git branch -f main HEAD~3
 上面的命令会将 main 分支强制指向 HEAD 的第 3 级父提交。
-
 强制修改分支位置 -f
 
 //*五、撤销变更
@@ -83,6 +82,13 @@ git cherry-pick <提交号>...
 git rebase -i HEAD~4
 (jiaohu)
 pick OR OMIT
+
+
+
+
+
+
+
 
 
 */
