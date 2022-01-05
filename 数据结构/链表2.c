@@ -142,6 +142,7 @@ void Delete(LinkList head,int pos){
     }
 }
 
+
 //*查询
 Node *Search(LinkList head,char name[]){//?[]可以吗
     Node *p=head->next;
