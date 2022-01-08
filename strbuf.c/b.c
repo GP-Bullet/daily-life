@@ -53,20 +53,21 @@ static inline size_t strbuf_avail(const struct strbuf *sb){
     return sb->alloc-sb->len-1;
 }
 void strbuf_insert(struct strbuf *sb, size_t pos, const void *data, size_t len){//strcpy的进一步理解及strncpy
-    int i=sb->buf+pos;
+    int i;
+    //    \0的问题
     if(pos>sb->alloc){
         printf("this position is wrong!");
     }else{
-        char*ptr=sb->buf+pos;
         sb->len+=len;
         while(strbuf_avail(sb)>len){//有=号
             sb->alloc*=2;
             sb->buf=(char*)realloc(sb->buf,sizeof(char)*(sb->alloc));
-    }
-        strcpy(sb->buf+pos,(const char*)data);
-        while(){
-            sb->buf++
         }
+        strcpy((char*)data+len+1,"");
+        for(i=pos;i<=(sb->len)+1;i++){
+            sb->buf[i+len]=sb->buf[i];
+        }
+
     }
 
 
