@@ -29,7 +29,7 @@ void strbuf_grow(struct strbuf*sb,size_t extra){//长度扩大啥意思,是指�
 }
 void strbuf_add(struct strbuf*sb,const void *data,size_t len){
     sb->len+=len;
-    while(sb->len>=sb->alloc){//有=号
+    while(strbuf_avail(sb)>len){//有=号
         sb->alloc*=2;
         sb->buf=(char*)realloc(sb->buf,sizeof(char)*(sb->alloc));
     }
@@ -43,7 +43,8 @@ void strbuf_addstr(struct strbuf *sb, const char *s){
     strbuf_add(sb,s,strlen(s));
 }
 void strbuf_addbuf(struct strbuf *sb, const struct strbuf *sb2){
-    void strbuf_addbuf(struct strbuf *sb, const struct strbuf *sb2);void strbuf_addbuf(struct strbuf *sb, const struct strbuf *sb2);
+    sb->len+=sb2->len;
+    strbuf_add(sb,sb2->buf,sb2->len);
 }
 static inline void strbuf_setlen(struct strbuf *sb, size_t len){
     sb->len=len;
@@ -52,14 +53,22 @@ static inline size_t strbuf_avail(const struct strbuf *sb){
     return sb->alloc-sb->len-1;
 }
 void strbuf_insert(struct strbuf *sb, size_t pos, const void *data, size_t len){//strcpy的进一步理解及strncpy
-    int i=0;
+    int i=sb->buf+pos;
     if(pos>sb->alloc){
         printf("this position is wrong!");
     }else{
+        char*ptr=sb->buf+pos;
         sb->len+=len;
-        //char*ptr=sb->buf+pos;
-        size_t strbuf_avail
+        while(strbuf_avail(sb)>len){//有=号
+            sb->alloc*=2;
+            sb->buf=(char*)realloc(sb->buf,sizeof(char)*(sb->alloc));
     }
+        strcpy(sb->buf+pos,(const char*)data);
+        while(){
+            sb->buf++
+        }
+    }
+
 
 }
 
