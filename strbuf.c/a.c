@@ -1,9 +1,9 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-//sb
-//sb结构体
-//strbuf    分别指的是啥。。。。。
+
+//?为什么要求内存只能成倍的增加
+
 struct strbuf{
     int len;
     int alloc;//当前容量？我们每次动态分配的数组大小
@@ -48,7 +48,30 @@ void strbuf_release(struct strbuf*sb){
     free(sb->buf);
 }
 void strbuf_swap(struct strbuf*a,struct strbuf*b){//空间不一样
+    int temp1,temp2=0;                            //buf里面有内容吗
+    temp1=a->len;                                 //不知道空间是否占满，realloc会影响其中内容
+    a->len=b->len;
+    b->len=temp1;
+  //  temp2=a->alloc;
+  //  a->alloc=b->alloc;
+  //  b->len=temp2;
 
+    //a->buf=(char*)realloc(a->buf,sizeof(char)*(a->alloc));
+    //b->buf=(char*)realloc(b->buf,sizeof(char)*(b->alloc));
+    int max=a->len>b->len?a->len:b->len;
+    char*temp=(char*)malloc(sizeof(char)*max);
+    while(a->alloc<max){
+        a->alloc*=2;
+        a->buf=(char*)realloc(a->buf,(sizeof(char)*(a->alloc)));
+    }
+    while(b->alloc<max){
+        b->alloc*=2;
+        b->buf=(char*)realloc(b->buf,(sizeof(char)*(b->alloc)));
+    }
+    strcpy(temp,a->buf);
+    strcpy(a->buf,b->buf);
+    strcpy(b->buf,temp);
+    
 }
 char*strbuf_detach(struct strbuf *sb,size_t *sz){//原始内存取出是什么意思
     *sz=sb->len;
