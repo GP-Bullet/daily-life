@@ -8,7 +8,7 @@ struct strbuf{
     int alloc;
     char *buf;
 };
-
+//   **？
 struct strbuf *strbuf_split_buf(const char *str, size_t len, char terminator, int max);
 
 struct strbuf *strbuf_split_buf(const char *str, size_t len, char terminator, int max){
@@ -26,6 +26,6 @@ struct strbuf *strbuf_split_buf(const char *str, size_t len, char terminator, in
         }
     }
 
-    
+
     return sb;
 }
