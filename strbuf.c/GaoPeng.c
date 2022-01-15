@@ -8,7 +8,7 @@
 void strbuf_init(struct strbuf*sb,size_t alloc){
     sb->len=0;
     sb->alloc=alloc;
-    sb->buf=(char*)malloc(sizeof(char)*alloc);
+    sb->buf=(char*)malloc(sizeof(char)*(alloc+1));
 }
 
 void strbuf_attach(struct strbuf*sb,void*str,size_t len,size_t alloc){//str的len和alloc
@@ -26,6 +26,7 @@ void strbuf_attach(struct strbuf*sb,void*str,size_t len,size_t alloc){//str的le
 
 }
 void strbuf_release(struct strbuf*sb){
+
     free(sb->buf);
 }
 void strbuf_swap(struct strbuf*a,struct strbuf*b){//空间不一样
@@ -74,8 +75,11 @@ int strbuf_cmp(const struct strbuf*first,const struct strbuf*second){
 }
 
 void strbuf_reset(struct strbuf*sb){//清空
+//jiahuan.c
+    for(int i=0;i<sb->len;i++){
+        *((sb->buf)+i)='\0';
+    }
     sb->len=0;
-    strcpy(sb->buf,"");
 }
 
 
@@ -89,7 +93,7 @@ void strbuf_grow(struct strbuf*sb,size_t extra){//长度扩大啥意思,是指�
     }
     sb->alloc=sb->len+extra;
     sb->buf=(char*)realloc(sb->buf,sizeof(char)*(sb->alloc));
-    */
+    
     if(sb->alloc==0){
         sb->alloc+=extra;
     }else{
@@ -97,13 +101,32 @@ void strbuf_grow(struct strbuf*sb,size_t extra){//长度扩大啥意思,是指�
             sb->alloc*=2;
         }
     }
-    sb->buf=(char*)realloc(sb->buf,sizeof(char)*sb->alloc);
+    sb->buf=(char*)realloc(sb->buf,sizeof(char)*sb->alloc);*/
+//    jiahuan.c
+    if(sb -> len + extra < sb -> alloc) return;
+    if(sb -> alloc == 0)
+        sb->buf = NULL;
+    sb -> buf = (char*)realloc(sb -> buf, sb -> len + extra + 1);
+    sb -> alloc = sb->len + extra + 1;
+    if(sb -> alloc == 0)        sb->buf[0]='\0';
 }
 
 void strbuf_add(struct strbuf*sb,const void *data,size_t len){
-    strbuf_grow(sb,len);
+/* strbuf_grow(sb,len);
     memcpy(sb->buf+sb->len,data,len);
     sb->len+=len;
+    sb->buf[sb->len]='\0';*/
+    if(sb->len+len>sb->alloc)   
+    {
+        strbuf_grow(sb,len+1);
+    }
+
+    for(int i = 0;i < len  ;i++)
+    {
+            sb->buf[sb->len+i] = ((char *)data)[i];
+    }
+    sb->len+=len;
+    
     sb->buf[sb->len]='\0';
 }
 
@@ -235,13 +258,10 @@ void strbuf_remove(struct strbuf *sb, size_t pos, size_t len){
 
 
 
-
+//*这里的return是要干啥
 ssize_t strbuf_read(struct strbuf *sb, int fd, size_t hint){
     /* sb->buf=(char*)realloc(sb->buf,sizeof(char)*(hint?hint:8192));
     FILE*file=fdopen(fd,"r");
-    sb->buf=(char*)realloc(sb->buf,sb->alloc+(hint?hint:8192));
-    sb->alloc+=hint?hint:8192;
-    char*line=(char*)malloc(BUFSIZ);
     size_t len=0;
     int sign=0;
     while(sign=getline(&line,&len,file)!=EOF){
@@ -251,17 +271,27 @@ ssize_t strbuf_read(struct strbuf *sb, int fd, size_t hint){
     fclose(file);
     file=NULL;
     free(line);
+    return sb->len;*/
+
+    FILE*fp=fdopen(fd,"r");
+    
+    char c;
+    if((c=fgetc(fp))==EOF){
+        return sb->len;
+    }else{
+        sb->buf[sb->len++]=c;
+        sb->alloc+=8192;
+        sb->buf=(char*)realloc(sb->buf,sizeof(char)*(sb->alloc));
+    
+        while((c=fgetc(fp))!=-1){
+            sb->buf[sb->len]=c;
+            sb->len++;
+        }
+    }
+
+
+    sb->buf[sb->len]='\0';
     return sb->len;
-    */
-    return 0;
-
-
-
-
-
-
-
-
 
 }
 
@@ -283,7 +313,20 @@ int strbuf_getline(struct strbuf *sb, FILE *fp){
     }
     free(line);
     return len;*/
-    return 0;
+    char c;
+
+    while((c=fgetc(fp))!=EOF){
+        if(c=='\n'||feof(fp)!=0)
+            break;
+        strbuf_grow(sb,2);
+        sb->buf[sb->len]=c;
+        sb->len++;
+        
+    }
+    sb->buf[sb->len]='\0';
+
+    return sb->len;
+
 }
 
 
@@ -291,34 +334,104 @@ int strbuf_getline(struct strbuf *sb, FILE *fp){
 //5
 
 struct strbuf **strbuf_split_buf(const char *str, size_t len, int terminator, int max){
-  /*  //str[i]='\0'
-    //str+i='\0'
-    struct strbuf *sb=(struct strbuf*)malloc(sizeof(struct strbuf)*max);
-
-    
-    int count=0;
-    int i=0;
-    while(i<len){
-        if(str[i]==terminator&&count<=max){
+/*   int count=0;
+    int i,j=0;
+    struct strbuf **ptr2;
+    for(i=0;i<len;i++){
+        if(str[i]==terminator){
             count++;
-        //    strcpy(str+i,"\0");
+        }
+        if(count>max||str==NULL){
+            break;
+        }
+    }    
+    ptr2=(struct strbuf **)malloc(sizeof(struct strbuf*)*(count+1));
+    int down=-1;
+    for(i=0;i<len;i++){
+        if(str[i]==terminator){
+            ptr2[j]=(struct strbuf*)malloc(sizeof(char)*(i-down));
+            memcpy(ptr2[j],str+down+1,i-down-1);
+            j++;
+            down=i;
+
         }
     }
+    if(down<=len-1){
+        ptr2[j]=(struct strbuf*)malloc(sizeof(char)*len-down);
+        memcpy(ptr2[j],str+down+1,len-1-down);
+        j++;
+    }
+    ptr2[count]=NULL;
+    return ptr2;*/ 
+
+    int i,count=0;
+    
+    char q[2]; 
+    q[0]=(char)terminator;
+    q[1]='\0';
+    struct strbuf **ptr2=NULL;
+    struct strbuf *ptr;
+    char s[len+1];
+    memcpy(s,str,len+1);
+    
+    for(i=0;i<len;i++){
+        if(s[i]=='\0'){
+            s[i]='#';
+        }
+    }
+    char*r=strtok(s,q);
+    
+    
+    while(r!=NULL&&count<max)
+    {   
+        int rlen=strlen(r);
+        for(i=0;i<rlen;i++){
+            if(r[i]=='#'){
+                r[i]='\0';
+            }
+        }
+        ptr=(struct strbuf*)malloc(sizeof(struct strbuf));
+        {
+            strbuf_init(ptr,rlen+1); 
+            strbuf_add(ptr,r,rlen);
+        }
+        ptr2=(struct strbuf**)realloc(ptr2,sizeof(struct strbuf*)*(count+2));
+        ptr2[count]=ptr;
+        count++;
+        
+        r=strtok(NULL,q);
+        
+    }
+
+    ptr2=(struct strbuf**)realloc(ptr2,sizeof(struct strbuf*)*(count+1));
 
 
-    return sb;*/
-    return NULL;
+    ptr2[count]= NULL;
+    return ptr2;
+
+
 }
 
 bool strbuf_begin_judge(char* target_str, const char* str, int strlen){
-    int i=0;
-    while(i<=strlen){
+/*    int i=0;
+    while(i<=strlen||str[i]!='\0'){
         if(target_str[i]!=str[i]){
             return false;
             i++;
         }
     }
+    return true;*/
+    int i;
+    for(i=0;i<strlen;i++){
+        if(str[i]=='\0'){
+            break;
+        }
+        if(target_str[i]!=str[i]){
+            return false;
+        }
+    }
     return true;
+
 }
 
 /*int strbuf_pandaun(struct strbuf*sb,char*s){
@@ -332,12 +445,16 @@ bool strbuf_begin_judge(char* target_str, const char* str, int strlen){
     return 1;
 }*/
 
-char* strbuf_get_mid_buf(char* target_buf, int begin, int end, int len){
-    /*char*ptr=(char*)malloc(sizeof(char)*(end-begin));
-    strbuf(ptr,target_buf+begin);
-
-    return ptr;*/
-    return NULL;
+char* strbuf_get_mid_buf(char* target_buf, int begin, int end, int len){//啥叫分成引用和拷贝两个模式
+    
+    if(begin>end||target_buf==NULL){
+        return NULL;
+    }
+    char*ptr=(char*)malloc(sizeof(char)*(end-begin+1));
+        memcpy(ptr,target_buf+begin,end-begin);
+        ptr[end-begin]='\0';
+    return ptr;
+    
 }
 
 /*

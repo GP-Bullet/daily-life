@@ -45,7 +45,7 @@ size_t getChunkFd(const void *pr) { return *(const size_t *) pr; }
 #endif
 #define AssertStrbufAlloced(x) AssertBufSize((x)->buf, (x)->alloc)
 #define AssertStrbufLen(x) ASSERT_GT((x)->alloc, (x)->len)
-
+#define Assert_Bin_EQ(x, y, len) ASSERT_EQ(memcmp(x, y, len), 0)
 // 2A
 TEST(strBufTest2A, init1) {
     strbuf t;
@@ -669,7 +669,7 @@ TEST(StrBufTestCHALLENGE, splitBuf1) {
     strbuf_release(result[0]);
 
     ASSERT_EQ(result[1]->len, 2);
-    ASSERT_STREQ(result[1]->buf, "12");
+    ASSERT_STREQ(result[1]->buf, "11");
     AssertStrbufAlloced(result[1]);
     AssertStrbufLen(result[1]);
     strbuf_release(result[1]);
@@ -740,6 +740,28 @@ TEST(StrBufTestCHALLENGE, splitBuf3) {
 
     ASSERT_STREQ(result[1]->buf, "345");
     ASSERT_EQ(result[1]->len, 3);
+    AssertStrbufAlloced(result[1]);
+    AssertStrbufLen(result[1]);
+    strbuf_release(result[1]);
+
+    free(result);
+}
+TEST(StrBufTestCHALLENGE, splitBuf4) {
+
+    char string[] = "\0ZZ\0\0  123 345  Z  3123  Z 3123  ";
+    strbuf **result = strbuf_split_buf(string, strlen(string), 'Z', 2);
+    ASSERT_NE(string, nullptr);
+    ASSERT_EQ(result[2], nullptr);
+    AssertBufSize(result, 3 * sizeof(strbuf *));
+
+    ASSERT_EQ(result[0]->len, 1);
+    Assert_Bin_EQ(result[0]->buf, "\0", 2);
+    AssertStrbufAlloced(result[0]);
+    AssertStrbufLen(result[0]);
+    strbuf_release(result[0]);
+
+    ASSERT_EQ(result[1]->len, 13);
+    Assert_Bin_EQ(result[1]->buf, "\0\0  123 345  ", 14);
     AssertStrbufAlloced(result[1]);
     AssertStrbufLen(result[1]);
     strbuf_release(result[1]);
