@@ -8,6 +8,7 @@
 void strbuf_init(struct strbuf*sb,size_t alloc){
     sb->len=0;
     sb->alloc=alloc;
+    if(alloc)
     sb->buf=(char*)malloc(sizeof(char)*(alloc+1));
 }
 
@@ -20,10 +21,11 @@ void strbuf_attach(struct strbuf*sb,void*str,size_t len,size_t alloc){//str的le
     sb->len+=len;
     strcat(sb->buf,(const char*)str);
     */
-    strbuf_init(sb,alloc);
+// strbuf_init(sb,alloc);
+    sb->alloc=alloc;
     sb->len=len;
     sb->buf=(char*)str;
-
+    sb->buf[sb->len]='\0';
 }
 void strbuf_release(struct strbuf*sb){
 
@@ -39,26 +41,12 @@ void strbuf_swap(struct strbuf*a,struct strbuf*b){//空间不一样
     a->alloc=b->alloc;
     b->alloc=temp2;
 
-    //a->buf=(char*)realloc(a->buf,sizeof(char)*(a->alloc));
-    //b->buf=(char*)realloc(b->buf,sizeof(char)*(b->alloc));
-    /*  int max=a->len>b->len?a->len:b->len;
-    char*temp=(char*)malloc(sizeof(char)*max);
-    while(a->alloc<max){
-        a->alloc*=2;
-        a->buf=(char*)realloc(a->buf,(sizeof(char)*(a->alloc)));
-    }
-    while(b->alloc<max){
-        b->alloc*=2;
-        b->buf=(char*)realloc(b->buf,(sizeof(char)*(b->alloc)));
-    }
-    strcpy(temp,a->buf);
-    strcpy(a->buf,b->buf);
-    strcpy(b->buf,temp);
-*/
-    char*temp=(char*)malloc(sizeof(char)*a->len);
+
+    char*temp;
     temp=a->buf;
     a->buf=b->buf;
-    b->buf=temp;    
+    b->buf=temp;
+
 }
 
 
@@ -233,11 +221,11 @@ void strbuf_ltrim(struct strbuf*sb){
         sb->len--;
         i++;
     }
-    char*ptr=(char*)malloc(sizeof(char)*(sb->len+1));
+//    char*ptr=(char*)malloc(sizeof(char)*(sb->len+1));
 //    strcpy(ptr,sb->buf+i);
-    memmove(ptr,sb->buf+i,sb->len);
-    memmove(sb->buf,ptr,sb->len);
-//    memmove(sb->buf,sb->buf+i,sb->len);
+//    memmove(ptr,sb->buf+i,sb->len);
+//   memmove(sb->buf,ptr,sb->len);
+    memmove(sb->buf,sb->buf+i,sb->len);
 
 }
 
