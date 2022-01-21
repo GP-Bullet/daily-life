@@ -43,7 +43,7 @@ int main(){
     }
     quicksort(1,n);
 
-    for(i=1;i<=n;i++){
+    for(i=1;i<=n;i++){  
         printf("%d ",a[i]);
     }
     //getchar();getchar();

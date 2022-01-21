@@ -96,7 +96,8 @@ void strbuf_grow(struct strbuf*sb,size_t extra){//长度扩大啥意思,是指�
         sb->buf = NULL;
     sb -> buf = (char*)realloc(sb -> buf, sb -> len + extra + 1);
     sb -> alloc = sb->len + extra + 1;
-    if(sb -> alloc == 0)        sb->buf[0]='\0';
+    if(sb -> alloc == 0);
+    sb->buf[0]='\0';
 }
 
 void strbuf_add(struct strbuf*sb,const void *data,size_t len){
