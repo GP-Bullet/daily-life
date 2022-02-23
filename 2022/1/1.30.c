@@ -2,8 +2,7 @@
 //如果为奇数就除以2
 //如果为偶数就找
 #include<stdio.h>
-
-
+#if 0
 int main(){
     long long a[10001];
     int n;
@@ -33,3 +32,25 @@ int main(){
     }
     return 0;
 }
+#endif
+#if 1
+int main(){
+    int p,q;
+    int i,T;
+    int a[10001];
+    char a[10001];
+    int b[10001];
+    char b[10001];
+    for(i=0;i<T;i++){
+        
+}
+
+
+
+
+
+
+
+
+}
+#endif
