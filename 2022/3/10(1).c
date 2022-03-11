@@ -87,9 +87,30 @@ shell在后台，ls没用
         kill -l 前32个
         ctrl c sigint sigkill
 
-char *str="hello"
-    *str=''
+char *str="hello"只读数据区
+    *str='H'
+    段错误
+    page 4k read only
+    kernel   kill -11 当前进程 sigsegv内存非法操作  不存在内存写
+    
+    sigstop暂停19 18继续
 
+kill 7490(进程号)   kill -9 7671 /sigkill
+
+*env  环境变量  
+    ELF .exe
+
+
+ls    app  是否需要路径
+echo $PATH    系统默认路径
+
+
+
+export PATH:$PATH:
+getit 打开
+cd ~   ls -a .bashrc  bash的配置文件
+
+.   source修改的环境变量传给父进程     /bin/bash    父进程 子进程
 
 
 
