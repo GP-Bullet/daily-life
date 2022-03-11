@@ -45,13 +45,50 @@ make
 *磁盘管理
 mount  挂载  镜像
 
+sudo fdisk -l
+挂载     sudo mount  /dev/sdb1   /mnt(任意目录) (原文件看不到)  
+        cd /mnt
+        sudo umount /mnt
+
+默认 /media
+dd if=sfile of=ssfile.c(复制)
 
 
+*压缩包   (.gz)(bzip2)
+tar   c  creat
+        x解压缩
+    tar cvf dir (归档文件)  -z  （压缩）  -j
+    tar xvf (解包)  -z   -j
+    -C指定路径
+rar 
+zip
 
 
+*进程管理
+who
+终端号
+ctrl alt f1 f2 f3 f4 f5 f6 f7 图形界面有无
+
+ps   aux
+进程   进程号   CPU使用  内存使用      tty使用的终端     stat（状态）       命令名
+                                                      r运行 s睡眠                              
 
 
+ctrl z暂停   到后台暂停
+jobs(查看暂停的进程)
 
+fg 1把作业到前台
+bg 2在后台运行
+前台            后台 
+一个进程组       ./app &
+shell在后台，ls没用
+
+*kill(向指定进程发送信号)
+        kill -l 前32个
+        ctrl c sigint sigkill
+
+char *str="hello"
+    *str=''
 
 
 
