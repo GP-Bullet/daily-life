@@ -33,7 +33,8 @@ man ls 函数接口长什么样
 *clear  清屏  ctrl +l
 
 alias别名
-
-
-
+echo 回显变量或者字符串
+    echo $?返回值
+date
+umask   (chmod)   mode & -(umask)
 */

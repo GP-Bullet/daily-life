@@ -107,7 +107,7 @@ int main(){
         a[i+1]=a[i]-a[i]/10;
         a[i]=a[i]%10;
     }
-        while(a[len-1]==0&&len>1)len--;//while去零法
+        while(a[len-1]=6=0&&len>1)len--;//while去零法
 
         if(flag=1)printf("-");
 
