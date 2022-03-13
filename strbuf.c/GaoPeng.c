@@ -120,7 +120,7 @@ void strbuf_add(struct strbuf*sb,const void *data,size_t len){
 }
 
 void strbuf_addch(struct strbuf*sb,int c){
-   // strbuf_add(sb,&c,1);
+   / strbuf_:dd(sb,&c,1);
     strbuf_grow(sb,2);
    // memset(sb->buf+sb->len,(char)c,sizeof(char));
     sb->buf[sb->len]=c;
@@ -451,5 +451,4 @@ char* strbuf_copy(struct strbuf*sb,int begin,int end,int len){
     char*ptr=(char*)malloc(sizeof(char)*(end-begin));
     strcpy(ptr,sb->buf+begin);
 
-    return ptr;
-}*/
+    return ptr;*:/
