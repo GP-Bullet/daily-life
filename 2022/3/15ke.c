@@ -112,7 +112,7 @@ int main(){
     return 0;
 }
 #endif
-#if 0
+#if 1
 int main(){
     float a,b;
     char c;
@@ -129,7 +129,7 @@ int main(){
             break;
         case '/':
                 if(b==0){
-                    printf("0不能做除数");
+                    printf("0不能做除数");break;
                 }else{
                     printf("%f/%f=%.2f",a,b,a/b);
                     break;
@@ -147,6 +147,7 @@ int main(){
 
 
 
-#if 1;
 
-#endif
+
+
+

@@ -41,6 +41,6 @@ int main(){
         i++;
     }
     fclose(fp);
-  
+
 return 0;
 }

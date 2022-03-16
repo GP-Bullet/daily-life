@@ -145,14 +145,14 @@ void display_attribute(struct stat buf,char *name)          //获取文件属性
         }  
         break;
          case 5:        //-l参数
-         {
-             if(name[0]!='.')
-             {
-                 display_attribute(buf,name);
-                 printf(" %s\n",name);
-             }
-             break;
-         }
+        {
+            if(name[0]!='.')
+            {
+                display_attribute(buf,name);
+                printf(" %s\n",name);
+            }
+            break;
+        }
          case 7:        //同时有-a -l参数
          {
              display_attribute(buf,name);
