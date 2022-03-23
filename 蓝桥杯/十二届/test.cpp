@@ -3,7 +3,7 @@ using namespace std;
 int main(){
     int cnt[10];
     for(int i=0;i<10;i++)
-        cnt[i]=2021;
+        cnt[i]=150;
     for(int i=1;;i++){
         int t=i;
         while(t){
