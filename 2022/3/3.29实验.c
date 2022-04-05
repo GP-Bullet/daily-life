@@ -168,32 +168,28 @@ int main(){
 
 //6
 #if 0
+//没有好的调试技巧
 #include<stdio.h>
+#define PI 3.1415926535//防止内存溢出,利用周期性
+
 int main(){
 	double x;
 	scanf("%lf",&x);
+	
+	double sum=x;
+	int a=-1;
+	double t=1,t_x=x-2*PI*(int)(x/(2*PI));
+	for(int i=1;;i=i+2){//注意是i=i+2不是i+2
 
-	double sum=0;
-	int a=1;
-
-	for(int i=1;;i+2){
+		t=t*(i+1)*(i+2);
+		t_x=t_x*x*x;	
+		if((t_x/t)<1e-5)break;
 		
+		sum+=a*t_x/t;
+
 		a*=-1;
-		if(i==1){
-			a=1;
-		}
-		double t=1;
-
-		for(int j=1;j<=i;j++){
-			x*=x;
-			t*=j;
-		}
-		if((x/t)<1e-5)break;
-		
-		sum+=a*x/t;
-		printf("%lf",sum);
 	}
-	printf("%lf",sum);
+	printf("sin(%lf)=%lf",x,sum);
 	return 0;
 }
 #endif
@@ -201,10 +197,22 @@ int main(){
 
 
 //8
-#if 1
+#if 0
+//没有读清楚题目
 #include<stdio.h>
 int main(){
-	
+	int a[40],n;
+	for(int i=1;i<=36;i++){
+		a[i]=i;
+	}
+	int c;
+	for(c=0;c<=15;c++){
+		int sum=a[1+c]+a[2+c]+a[4+c]+a[7+c]+a[11+c]+a[16+c]+a[22+c];
+		if(sum==105){
+			break;
+		}
+	}
+	printf("%d %d %d %d %d %d %d\n",a[1+c],a[2+c],a[4+c],a[7+c],a[11+c],a[16+c],a[22+c]);
 }
 #endif
 
@@ -212,6 +220,7 @@ int main(){
 
 //9
 #if 0
+//i和j的双重循环使用aibj的组合
 #include<stdio.h>
 int main(){
 	char a[4]={' ','A','B','C'};
@@ -385,5 +394,6 @@ int main(){
 		}
 		day(d1);//任意日期判断星期几
 	}
+	return 0;
 }
 #endif
