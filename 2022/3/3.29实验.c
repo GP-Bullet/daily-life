@@ -244,7 +244,7 @@ int main(){
 
 
 //10
-#if 1
+#if 0
 
 #include<stdio.h>
 int runnian(int year);

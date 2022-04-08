@@ -1,7 +1,7 @@
 
 #include<stdio.h>
 #include<math.h>
-#if 0
+#if 1
 int main(){
     float x;
     scanf("%f",&x);
@@ -20,7 +20,7 @@ int main(){
 }
 #endif
 
-#if 0
+#if 1
 int main(){
     float a;
     scanf("%f",&a);
@@ -33,7 +33,7 @@ int main(){
 }
 #endif
 #include<stdlib.h>
-#if 0
+#if 1
 int comp(const void*a,const void*b){
     return*(int*)a-*(int*)b;
 }
@@ -57,7 +57,7 @@ int main(){
 #endif
 
 
-#if 0
+#if 1
 int main(){
     char a;
     scanf("%c",&a);
@@ -72,7 +72,7 @@ int main(){
 }
 #endif
 
-#if 0
+#if 1
 int main(){
     float x,y;
     scanf("%f,%f",&x,&y);
@@ -90,7 +90,7 @@ int main(){
 }
 #endif
 
-#if 0
+#if 1
 int main(){
     float a,b;
     int c,d;
@@ -140,8 +140,6 @@ int main(){
             break;
     }
     return 0;
-
-
 }
 #endif
 
