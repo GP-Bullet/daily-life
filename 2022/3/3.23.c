@@ -53,13 +53,12 @@ void SeekYear(void)
 	int n = 1;
 	while (n)
 	{
-		system("CLS");
-		system("mode con cols=35 lines=25");                                //设置窗口大小
-		system("color 5f");
+//		system("CLS");
+//		system("mode con cols=35 lines=25");                                //设置窗口大小
+//		system("color 5f");
 		printf(" ║------------------------------║\n");
 		printf(" ║-----欢迎使用年历查询系统-----║\n");
 		printf(" ║-----可供查询的年历 ----------║\n");
-		printf(" ║-----1582年——9999年---------║\n");
 		printf(" ║--------- 按1查询！-----------║\n");
 		printf(" ║--------- 按0退出! -----------║\n");
 		printf(" ╚══════════════════════════════╝\n\n");
@@ -121,7 +120,7 @@ void Seekyear(void)
 
 		Print(week, &Date1, &Date2, &Date3, count - 2);
 	}
-	system("pause");
+//	system("pause");
 }
 
 void SeekMonth(void)
@@ -129,7 +128,7 @@ void SeekMonth(void)
 	int n = 1;
 	while (n)
 	{
-		system("CLS");
+//		system("CLS");
 
 		printf(" ║------------------------------║\n");
 		printf(" ║------------------------------║\n");
@@ -183,7 +182,7 @@ void Seekmonth(void)
 	printf("\n\n--------------%d 年--------------\n", year);
 	PrintMonth(week, &Date, count);
 	printf("\n");
-	system("pause");
+//	system("pause");
 }
 
 void SeekDay(void)
@@ -191,7 +190,7 @@ void SeekDay(void)
 	int n = 1;
 	while (n)
 	{
-		system("CLS");
+//		system("CLS");
 
 		printf(" ║------------------------------║\n");
 		printf(" ║------------------------------║\n");
@@ -258,13 +257,13 @@ void Seekday(void)
 	case 6: printf("星期六"); break;
 	}
 	printf("\n");
-	system("pause");
+//	system("pause");
 }
 
 
 /*功能：判断是不是闰年
-  参数：y 年
-  返回值：0 平年， 1 闰年*/
+参数：y 年
+返回值：0 平年， 1 闰年*/
 int IsLeapYear(int y)
 {
 	int flag = 0;
