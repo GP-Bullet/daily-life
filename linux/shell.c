@@ -147,7 +147,7 @@ int  parseCmds(int n){
                     head->bgExec=1;
                 }
             }
-truetruetruecase '\t':cmdStr[i]=' ';break;
+ '\t':cmdStr[i]=' ';break;
             case ';':{//including  ';'  a new cmdStr
                 beginCmd = 0;
                 cmdStr[i]='\0';  
@@ -211,42 +211,11 @@ int handleVar(struct cmd *pcmd,int n){
     pcmd->args[n] = envVar[varNum++];
     return 0;
 }
-
+/*
 int parseArgs(){
     /* get args of each cmd and  create cmd-node seperated by pipe */
     char beginItem=0,beginQuote=0,beginDoubleQuote=0,hasVar=0,c;
-trueint begin,end;
-truestruct cmd* pcmd;
-    for(int p=0;p<cmdNum;++p){
-truetrueif(beginQuote||beginItem||beginDoubleQuote){
-truetruetruereturn -1;  // wrong cmdStr
-truetrue}
-        pcmd=&cmdinfo[p];
-        begin = pcmd->begin,end = pcmd->end;
-        init(pcmd);// initalize 
-        for(int i=begin;i<end;++i){
-            c = cmdStr[i];
-truetruetrueif((c=='\"')&&(cmdStr[i-1]!='\\'&&(!beginQuote))){
-truetruetruetrueif(beginDoubleQuote){
-truetruetruetruetruecmdStr[i]=beginDoubleQuote=beginItem=0;
-                    if(hasVar){
-                        hasVar=0;
-                        handleVar(pcmd,pcmd->argc-1);  //note that is argc-1, not argc
-                    }
-                }else{
-truetruetruetruetruebeginDoubleQuote=1;
-truetruetruetruetruepcmd->args[pcmd->argc++]=cmdStr+i+1;
-truetruetruetrue}
-                continue;
-truetruetrue}else if(beginDoubleQuote){
-                if((c=='$') &&(cmdStr[i-1]!='\\')&&(!hasVar))hasVar=1;
-                continue;
-            }
-            
-            if((c=='\'')&&(cmdStr[i-1]!='\\')){
-                if(beginQuote){
-truetruetruetruetruecmdStr[i]=beginQuote=beginItem=0;
-                }else{
+
                     beginQuote=1;
                     pcmd->args[pcmd->argc++]=cmdStr+i+1;
                 }
@@ -304,7 +273,7 @@ truetruetruetruetruecmdStr[i]=beginQuote=beginItem=0;
         pcmd->end=end;
         //printf("%dfrom:%s   %dto:%s\n",pcmd->lredir,pcmd->fromFile,pcmd->rredir,pcmd->toFile);
     }
-}
+}*/
 
 int execInner(struct cmd* pcmd){  
     /*if inner cmd, {exec, return 0} else return 1  */
@@ -373,26 +342,3 @@ void setIO(struct cmd *pcmd,int rfd,int wfd){
     }
 } 
 
-int execOuter(struct cmd * pcmd){
-    if(!pcmd->next){
-        setIO(pcmd,STDIN_FILENO,STDOUT_FILENO);
-        execvp(pcmd->args[0],pcmd->args);
-    }
-    int fd[2];
-    pipe(fd);
-    pid_t pid = fork();
-    if(pid<0){
-        Error(FORK_ERROR);
-    }else if (pid==0){
-        close(fd[0]);
-        setIO(pcmd,STDIN_FILENO,fd[1]);
-        execvp(pcmd->args[0],pcmd->args);
-        Error(EXEC_ERROR);
-    }else{
-        wait(NULL);
-        pcmd = pcmd->next;  //notice
-        close(fd[1]);
-        setIO(pcmd,fd[0],STDOUT_FILENO);  
-        execOuter(pcmd);
-    }
-}
