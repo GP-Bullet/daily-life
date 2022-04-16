@@ -2,9 +2,6 @@
 
 int main() {
 
-
-
-
 	//获取当前工作目录、用户名、主机名
 	int result = getCurWorkDir();
 	if (ERROR_SYSTEM == result) {
@@ -363,14 +360,14 @@ int command_Redirect(int left,int right){
     if(pid==-1){
         result=ERROR_FORK;
     }else if(pid==0){
-        /*输入输出重定向*/
+        //输入输出重定向
         if(inNum==1){
             freopen(inFile,"r",stdin);
         }if(outNum==1){
             freopen(outFile,"w",stdout);
         }
 
-        /*执行命令*/
+        //执行命令
         char *com[BUF_SZ];
         for(int i=left;i<endFlg;i++){
             com[i]=com[i]=commands[i];
