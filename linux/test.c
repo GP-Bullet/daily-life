@@ -1,449 +1,408 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<unistd.h>
-#include<sys/types.h>
-#include<fcntl.h>
-#include<sys/wait.h>
-#include<sys/stat.h>
-#include<dirent.h>
-#include<signal.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/signal.h>
+#include <sys/types.h>
+#include <errno.h>
+#include <pwd.h>
 
-#define normal       0   //正常
-#define out_redirect 1   //输出重定向
-#define in_redirect  2   //输入重定向
-#define have_pipe    3   //有管道
-#define out_redirect_acc  4 //累加输出重定向
-char arglist[100][256];
+#define BUF_SZ 256
+#define TRUE 1
+#define FALSE 0
 
-void print_promt();
-void get_input(char **buf);
-void explain_input(char *,int *,char a[100][256]);
-void do_cmd(int , char a[100][256]);
-int find_command(char *);
+const char* COMMAND_EXIT = "exit";
+const char* COMMAND_HELP = "help";
+const char* COMMAND_CD = "cd";
+const char* COMMAND_IN = "<";
+const char* COMMAND_OUT = ">";
+const char* COMMAND_PIPE = "|";
 
-int background=0;  //判断是否存在后台运行符
+// 内置的状态码
+enum {
+	RESULT_NORMAL,
+	ERROR_FORK,
+	ERROR_COMMAND,
+	ERROR_WRONG_PARAMETER,
+	ERROR_MISS_PARAMETER,
+	ERROR_TOO_MANY_PARAMETER,
+	ERROR_CD,
+	ERROR_SYSTEM,
+	ERROR_EXIT,
 
-void handler(int signo)
-{
-    char tmp[256];
-    char tmpa[256];
-    int tt=0;
-    getcwd(tmp,256);
-    int dd=strlen(tmp)-2;      //这段代码是提取出路径中的最后一个文件
-    for(int i=dd;i>=0;i--)
-    {
-        if(tmp[i]=='/')
-        {
-            tt=i;
-            break;
-        }
-    }
-    for(int i=tt;i<=dd+1;i++) tmpa[i-tt]=tmp[i];
-    tmpa[dd+2-tt]='\0'; 
-    printf("\001\033[1m\002");
-    printf("\033[34m");
-    printf("\n错误!my_shell@%s$$:",tmp);
-    printf("\001\033[0m\002");
-    //setbuf(stdout,_IO_BUFSIZ);
+	/* 重定向的错误信息 */
+	ERROR_MANY_IN,
+	ERROR_MANY_OUT,
+	ERROR_FILE_NOT_EXIST,
+	
+	/* 管道的错误信息 */
+	ERROR_PIPE,
+	ERROR_PIPE_MISS_PARAMETER
+};
+
+char username[BUF_SZ];
+char hostname[BUF_SZ];
+char curPath[BUF_SZ];
+char commands[BUF_SZ][BUF_SZ];
+
+int isCommandExist(const char* command);
+void getUsername();
+void getHostname();
+int getCurWorkDir();
+int splitCommands(char command[BUF_SZ]);
+int callExit();
+int callCommand(int commandNum);
+int callCommandWithPipe(int left, int right);
+int callCommandWithRedi(int left, int right);
+int callCd(int commandNum);
+
+int main() {
+	/* 获取当前工作目录、用户名、主机名 */
+	int result = getCurWorkDir();
+	if (ERROR_SYSTEM == result) {
+		fprintf(stderr, "\e[31;1mError: System error while getting current work directory.\n\e[0m");
+		exit(ERROR_SYSTEM);
+	}
+	getUsername();
+	getHostname();
+
+	/* 启动myshell */
+	char argv[BUF_SZ];
+	while (TRUE) {
+		printf("\e[32;1m%s@%s:%s\e[0m$ ", username, hostname,curPath); // 显示为绿色
+		/* 获取用户输入的命令 */
+		fgets(argv, BUF_SZ, stdin);
+		int len = strlen(argv);
+		if (len != BUF_SZ) {
+			argv[len-1] = '\0';
+		}
+
+		int commandNum = splitCommands(argv);
+		
+		if (commandNum != 0) { // 用户有输入指令
+			if (strcmp(commands[0], COMMAND_EXIT) == 0) { // exit命令
+				result = callExit();
+				if (ERROR_EXIT == result) {
+					exit(-1);
+				}
+			} else if (strcmp(commands[0], COMMAND_CD) == 0) { // cd命令
+				result = callCd(commandNum);
+				switch (result) {
+					case ERROR_MISS_PARAMETER:
+						fprintf(stderr, "\e[31;1mError: Miss parameter while using command \"%s\".\n\e[0m"
+							, COMMAND_CD);
+						break;
+					case ERROR_WRONG_PARAMETER:
+						fprintf(stderr, "\e[31;1mError: No such path \"%s\".\n\e[0m", commands[1]);
+						break;
+					case ERROR_TOO_MANY_PARAMETER:
+						fprintf(stderr, "\e[31;1mError: Too many parameters while using command \"%s\".\n\e[0m"
+							, COMMAND_CD);
+						break;
+					case RESULT_NORMAL: // cd命令正常执行，更新当前工作l目录
+						result = getCurWorkDir();
+						if (ERROR_SYSTEM == result) {
+							fprintf(stderr
+								, "\e[31;1mError: System error while getting current work directory.\n\e[0m");
+							exit(ERROR_SYSTEM);
+						} else {
+							break;
+						}
+				}
+			} else { // 其它命令
+				result = callCommand(commandNum);
+				switch (result) {
+					case ERROR_FORK:
+						fprintf(stderr, "\e[31;1mError: Fork error.\n\e[0m");
+						exit(ERROR_FORK);
+					case ERROR_COMMAND:
+						fprintf(stderr, "\e[31;1mError: Command not exist in myshell.\n\e[0m");
+						break;
+					case ERROR_MANY_IN:
+						fprintf(stderr, "\e[31;1mError: Too many redirection symbol \"%s\".\n\e[0m", COMMAND_IN);
+						break;
+					case ERROR_MANY_OUT:
+						fprintf(stderr, "\e[31;1mError: Too many redirection symbol \"%s\".\n\e[0m", COMMAND_OUT);
+						break;
+					case ERROR_FILE_NOT_EXIST:
+						fprintf(stderr, "\e[31;1mError: Input redirection file not exist.\n\e[0m");
+						break;
+					case ERROR_MISS_PARAMETER:
+						fprintf(stderr, "\e[31;1mError: Miss redirect file parameters.\n\e[0m");
+						break;
+					case ERROR_PIPE:
+						fprintf(stderr, "\e[31;1mError: Open pipe error.\n\e[0m");
+						break;
+					case ERROR_PIPE_MISS_PARAMETER:
+						fprintf(stderr, "\e[31;1mError: Miss pipe parameters.\n\e[0m");
+						break;
+				}
+			}
+		}
+	}
 }
 
-void ShowHistory()
-{
-    int i = 0;
-    HIST_ENTRY ** his;
-    his = history_list();
-    while(his[i] != NULL)
-    printf("%s\n", his[i++]->line);
+int isCommandExist(const char* command) { // 判断指令是否存在
+	if (command == NULL || strlen(command) == 0) return FALSE;
+
+	int result = TRUE;
+	
+	int fds[2];
+	if (pipe(fds) == -1) {
+		result = FALSE;
+	} else {
+		/* 暂存输入输出重定向标志 */
+		int inFd = dup(STDIN_FILENO);
+		int outFd = dup(STDOUT_FILENO);
+
+		pid_t pid = vfork();
+		if (pid == -1) {
+			result = FALSE;
+		} else if (pid == 0) {
+			/* 将结果输出重定向到文件标识符 */
+			close(fds[0]);
+			dup2(fds[1], STDOUT_FILENO);
+			close(fds[1]);
+
+			char tmp[BUF_SZ];
+			sprintf(tmp, "command -v %s", command);
+			system(tmp);
+			exit(1);
+		} else {
+			waitpid(pid, NULL, 0);
+			/* 输入重定向 */
+			close(fds[1]);
+			dup2(fds[0], STDIN_FILENO);
+			close(fds[0]);
+
+			if (getchar() == EOF) { // 没有数据，意味着命令不存在
+				result = FALSE;
+			}
+			
+			/* 恢复输入、输出重定向 */
+			dup2(inFd, STDIN_FILENO);
+			dup2(outFd, STDOUT_FILENO);
+		}
+	}
+
+	return result;
 }
 
-int my_cd(char *buf)
-{
-    if(chdir(buf)<0)
-    return 0;
-    else return 1;
+void getUsername() { // 获取当前登录的用户名
+	struct passwd* pwd = getpwuid(getuid());
+	strcpy(username, pwd->pw_name);
 }
 
-int main(int argc,char **argv)
-{
-    system("clear");
-    setbuf(stdout,NULL);       /*程序在接受到SIGINT信号时转入的
-    处理函数不处理缓冲区会转入下一行 可以删除掉看看*/
-    read_history(NULL);    //默认在~/.history
-    int i=0;
-    int argcount=0;
-    char **arg=NULL;
-    signal(SIGINT,handler);
-    while(1){
-        char *buf=(char*)malloc(256);
-        if(buf==NULL)
-        {
-            perror("error in malloc\n");
-            exit(1);
-        }
-        background=0;
-        memset(buf,0,256);
-        print_promt();
-        get_input(&buf);
-        if(!strcmp(buf,"exit") || !strcmp(buf,"logout")) break;
-        for(i=0;i<100;i++) arglist[i][0]='\0';
-        argcount=0;
-        explain_input(buf,&argcount,arglist);
-        if(!strcmp(buf,"history"))
-        {
-            ShowHistory();
-            continue;
-        }
-/*         for(int i=0;i<argcount;i++)
-        printf("%s\n",arglist[i]); */
-        if(!strcmp(arglist[0],"cd"))
-        {
-            arglist[1][strlen(arglist[1])]='\0';
-            if(my_cd(arglist[1]))
-            {
-                char tmp_file[256];
-                getcwd(tmp_file,256);
-                continue;
-            }
-            else
-            {
-                printf("param error!\n");
-                continue;
-            }
-        }
-        do_cmd(argcount,arglist);    
-        free(buf);
-    }
-    exit(0);
+void getHostname() { // 获取主机名
+	gethostname(hostname, BUF_SZ);
 }
 
-void print_promt()
-{
-    setbuf(stdout,NULL);
-    char tmp[256];
-    char tmpa[256];
-    int tt=0;
-    getcwd(tmp,256);
-    int dd=strlen(tmp)-2;
-    for(int i=dd;i>=0;i--)
-    {
-        if(tmp[i]=='/')
-        {
-            tt=i;
-            break;
-        }
-    }
-    for(int i=tt;i<=dd+1;i++) tmpa[i-tt]=tmp[i];
-    tmpa[dd+2]='\0';
-    printf("\001\033[1m\002");
-    printf("\033[34m");
-    printf("\nmy_shell@%s$$:",tmpa);
-    printf("\001\033[0m\002");
-    //setbuf(stdout,_IO_BUFSIZ);
+int getCurWorkDir() { // 获取当前的工作目录
+	char* result = getcwd(curPath, BUF_SZ);
+	if (result == NULL)
+		return ERROR_SYSTEM;
+	else return RESULT_NORMAL;
 }
 
-void get_input(char **buf)
-{
-    int len=0;
-    char ch='\0';
-/*     ch=getchar();
-    while(len<256)
-    {
-        if(ch=='\n') break;
-        buf[len++]=ch;
-        ch=getchar();
-    } */
-    *buf=readline("my_shell@"); //不在这里加字符串可能会出现缓冲区问题 导致光标移动异常
-    add_history(*buf);
-    write_history(NULL);
-    if(len==256)
+int splitCommands(char command[BUF_SZ]) { // 以空格分割命令， 返回分割得到的字符串个数
+	int num = 0;
+	int i, j;
+	int len = strlen(command);
 
-    {
-        perror("command is too long \n");
-        return 0;
-    }
+	for (i=0, j=0; i<len; ++i) {
+		if (command[i] != ' ') {
+			commands[num][j++] = command[i];
+		} else {
+			if (j != 0) {
+				commands[num][j] = '\0';
+				++num;
+				j = 0;
+			}
+		}
+	}
+	if (j != 0) {
+		commands[num][j] = '\0';
+		++num;
+	}
+
+	return num;
 }
 
-void explain_input(char *buf,int *argcount,char arglist[100][256])
-{
-    char *q=buf;
-    char *p=buf;
-    int number=0;
-    for(int i=0;i<strlen(buf);i++)
-    if(buf[i]=='#')
-    {
-        background=1;  //判断是否存在后台运行符
-    }
-    while(1)
-    {
-        if(p[0]=='\0')
-        break;
-        if(p[0]==' ')
-        p++;
-        else
-        {
-            q=p;
-            number=0;
-            while(q[0]!='\0' && q[0]!=' '){
-                q++;
-                number++;
-            }
-            strncpy(arglist[*argcount],p,number+1);
-            arglist[*argcount][number]='\0';//最后一项为'\0'
-            *argcount=*argcount+1;
-            p=q;
-        }
-    }
+int callExit() { // 发送terminal信号退出进程
+	pid_t pid = getpid();
+	if (kill(pid, SIGTERM) == -1) 
+		return ERROR_EXIT;
+	else return RESULT_NORMAL;
 }
 
-void do_cmd(int argcount,char arglist[100][256])
-{
-    int flag=0;
-    int how=0;     //检测是否存在重定向 管道
-    int status=0;
-    int i=0;
-    int fd=0;
-    char *arg[argcount+1];
-    char *argnext[argcount+1];
-    char *file;
-    pid_t pid=0;
+int callCommand(int commandNum) { // 给用户使用的函数，用以执行用户输入的命令
+	pid_t pid = fork();
+	if (pid == -1) {
+		return ERROR_FORK;
+	} else if (pid == 0) {
+		/* 获取标准输入、输出的文件标识符 */
+		int inFds = dup(STDIN_FILENO);
+		int outFds = dup(STDOUT_FILENO);
 
-    for(i=0;i<argcount;i++)
-    {
-        arg[i]=(char*)arglist[i];
-    }
-    arg[argcount]=NULL;
-    for(i=0;arg[i]!=NULL;i++)
-    {
-        if(!strcmp(arg[i],">"))
-        {
-            flag++;
-            how=out_redirect;
-            if(arg[i+1]==NULL)
-            flag++;     //错误的格式
-        }
-    }
-    for(i=0;arg[i]!=NULL;i++)
-    {
-        if(!strcmp(arg[i],">>"))
-        {
-            flag++;
-            how=out_redirect_acc;
-            if(arg[i+1]==NULL)
-            flag++;     //错误的格式
-        }
-    }
-    for(i=0;arg[i]!=NULL;i++)
-    {
-        if(!strcmp(arg[i],"<"))
-        {
-            flag++;
-            how=in_redirect;
-            if(i==0)
-            flag++;     //错误的格式
-        }
-    }  
-    for(i=0;arg[i]!=NULL;i++)
-    {
-        if(!strcmp(arg[i],"|"))
-        {
-            flag++;
-            how=have_pipe;
-            if(arg[i+1]==NULL)
-            flag++;     //错误的格式
-            if(i==0)
-            flag++;
-        }
-    } 
-    if(flag>1)
-    {
-        perror("wrong command!\n");
-        return;
-    }
-    if(how==out_redirect)
-    {
-        for(i=0;arg[i]!=NULL;i++)
-        {
-            if(strcmp(arg[i],">")==0)
-            {
-                file=arg[i+1];
-                arg[i]=NULL;
-            }
-        }
-    }
-    if(how==in_redirect)
-    {
-        for(i=0;arg[i]!=NULL;i++)
-        {
-            if(strcmp(arg[i],"<")==0)
-            {
-                file=arg[i+1];
-                arg[i]=NULL;
-            }
-        }
-    }
-    if(how==have_pipe)
-    {
-        for(i=0;arg[i]!=NULL;i++)
-        {
-            if(strcmp(arg[i],"|")==0)
-            {
-                arg[i]=NULL;
-                int j;
-                for(j=i+1;arg[j]!=NULL;j++)
-                {
-                    argnext[j-i-1]=arg[j];
-                }
-                argnext[j-i-1]=arg[j]; //其实就是NULL
-                break;
-            }
-        }
-    }
-    if((pid=fork())<0)
-    {
-        printf("fork error\n");
-        return;
-    }
-    switch (how)
-    {
-        case 0:     //没有什么参数
-            if(pid==0)
-            {
-                if(!find_command(arg[0]))
-                {
-                    perror("can't find this command!\n");
-                    exit(0);
-                }
-                execvp(arg[0],arg);   //子进程运行参数命令
-                exit(0);              //退出子进程
-            }
-            break;
-        case 1:    //输出重定向
-            if(pid==0)
-            {
-                if(!find_command(arg[0]))
-                {
-                    perror("can't find this command!\n");
-                    exit(0);
-                }
-                fd=open(file,O_RDWR|O_CREAT|O_TRUNC,0644); //输出重定向的目标文件有可能不存在
-                dup2(fd,1);
-                execvp(arg[0],arg);
-                exit(0);
-            }
-            break;
-        case 2:    //输入重定向
-            if(pid==0)
-            {
-                if(!find_command(arg[0]))
-                {
-                    printf("%s :Command can not found\n",arg[0]);
-                    exit(0);
-                }
-                fd=open(file,O_RDONLY);
-                dup2(fd,0);
-                execvp(arg[0],arg);
-                exit(0);
-            }
-            break;
-        case 3:
-            if(pid==0)
-            {
-                int pid2=0;
-                int fd2=0;
-                int status=0;
-                if((pid2=fork())<0)   //子进程再次分离一个子进程
-                {
-                    perror("error in fork\n");
-                    exit(0);
-                }
-                else if(pid2==0)  //子进程
-                {
-                    if(!find_command(arg[0]))
-                    {
-                        printf("%s :Command can not found\n",arg[0]);
-                        exit(1);
-                    }
-                    fd2=open("/tmp/youdontnofile",O_WRONLY|O_CREAT|O_TRUNC,0644);
-                    dup2(fd2,1);
-                    execvp(arg[0],arg);
-                    exit(0);
-                }
-                if(waitpid(pid2,&status,0)==-1)  //第三个参数未被设置 所以阻塞父进程
-                {
-                    printf("wait child process error\n");
-                    exit(1);
-                }
-                if(!find_command(argnext[0]))
-                {
-                    printf("%s :Command can not found\n",argnext[0]);
-                    exit(1);
-                }
-                fd2=open("/tmp/youdontnofile",O_RDONLY);
-                dup2(fd2,0);
-                execvp(argnext[0],argnext);
-                if(remove("/tmp/youdontnofile"))
-                {
-                    perror("error in remove\n");
-                }
-                exit(1);
-            }
-            break;
-        case 4:       
-            if(pid==0)
-                {
-                    if(!find_command(arg[0]))
-                    {
-                        perror("can't find this command!\n");
-                        exit(0);
-                    }
-                    fd=open(file,O_RDWR|O_APPEND,0644); 
-                    dup2(fd,1);
-                    execvp(arg[0],arg);
-                    exit(0);
-                }
-                break;
-        default:
-            break;
-    }
-    if(background==1)  //子进程不会走到这里来
-    {
-        return; //父进程直接返回
-    }
-    if(waitpid(pid,&status,0)<0)
-    {
-        perror("error in wairpid\n");
-        exit(1);
-    }
+		int result = callCommandWithPipe(0, commandNum);
+		
+		/* 还原标准输入、输出重定向 */
+		dup2(inFds, STDIN_FILENO);
+		dup2(outFds, STDOUT_FILENO);
+		exit(result);
+	} else {
+		int status;
+		waitpid(pid, &status, 0);
+		return WEXITSTATUS(status);
+	}
 }
 
-int find_command(char *command)
-{
-    DIR* dp;
-    struct dirent* dirp;
-    char *path[]={"./","/bin","/usr/bin","/home/lizhaolong/suanfa/TeamF/LZL/Requirement",NULL};
-    //为了执行一些自己写的命令 所以加上了工作路径
-    if(strncmp(command,"./",2)==0)
-    {
-        command=command+2;//指针向后移动
-    }
-    int i=0;
-    while(path[i]!=NULL){
-        if((dp=opendir(path[i]))==NULL)
-        {
-            perror("error in opendir\n");
-            exit(1);
-        }
-        while((dirp=readdir(dp))!=NULL){
-            if(!strcmp(dirp->d_name,command))
-            {
-                //printf("找到！\n");
-                close(dp);
-                return 1;
-            }
-        }
-        close(dp);
-        i++;
-    }
-    return 0;
+int callCommandWithPipe(int left, int right) { // 所要执行的指令区间[left, right)，可能含有管道
+	if (left >= right) return RESULT_NORMAL;
+	/* 判断是否有管道命令 */
+	int pipeIdx = -1;
+	for (int i=left; i<right; ++i) {
+		if (strcmp(commands[i], COMMAND_PIPE) == 0) {
+			pipeIdx = i;
+			break;
+		}
+	}
+	if (pipeIdx == -1) { // 不含有管道命令
+		return callCommandWithRedi(left, right);
+	} else if (pipeIdx+1 == right) { // 管道命令'|'后续没有指令，参数缺失
+		return ERROR_PIPE_MISS_PARAMETER;
+	}
+
+	/* 执行命令 */
+	int fds[2];
+	if (pipe(fds) == -1) {
+		return ERROR_PIPE;
+	}
+	int result = RESULT_NORMAL;
+	pid_t pid = vfork();
+	if (pid == -1) {
+		result = ERROR_FORK;
+	} else if (pid == 0) { // 子进程执行单个命令
+		close(fds[0]);
+		dup2(fds[1], STDOUT_FILENO); // 将标准输出重定向到fds[1]
+		close(fds[1]);
+		
+		result = callCommandWithRedi(left, pipeIdx);
+		exit(result);
+	} else { // 父进程递归执行后续命令
+		int status;
+		waitpid(pid, &status, 0);
+		int exitCode = WEXITSTATUS(status);
+		
+		if (exitCode != RESULT_NORMAL) { // 子进程的指令没有正常退出，打印错误信息
+			char info[4096] = {0};
+			char line[BUF_SZ];
+			close(fds[1]);
+			dup2(fds[0], STDIN_FILENO); // 将标准输入重定向到fds[0]
+			close(fds[0]);
+			while(fgets(line, BUF_SZ, stdin) != NULL) { // 读取子进程的错误信息
+				strcat(info, line);
+			}
+			printf("%s", info); // 打印错误信息
+			
+			result = exitCode;
+		} else if (pipeIdx+1 < right){
+			close(fds[1]);
+			dup2(fds[0], STDIN_FILENO); // 将标准输入重定向到fds[0]
+			close(fds[0]);
+			result = callCommandWithPipe(pipeIdx+1, right); // 递归执行后续指令
+		}
+	}
+
+	return result;
+}
+
+int callCommandWithRedi(int left, int right) { // 所要执行的指令区间[left, right)，不含管道，可能含有重定向
+	if (!isCommandExist(commands[left])) { // 指令不存在
+		return ERROR_COMMAND;
+	}	
+
+	/* 判断是否有重定向 */
+	int inNum = 0, outNum = 0;
+	char *inFile = NULL, *outFile = NULL;
+	int endIdx = right; // 指令在重定向前的终止下标
+
+	for (int i=left; i<right; ++i) {
+		if (strcmp(commands[i], COMMAND_IN) == 0) { // 输入重定向
+			++inNum;
+			if (i+1 < right)
+				inFile = commands[i+1];
+			else return ERROR_MISS_PARAMETER; // 重定向符号后缺少文件名
+
+			if (endIdx == right) endIdx = i;
+		} else if (strcmp(commands[i], COMMAND_OUT) == 0) { // 输出重定向
+			++outNum;
+			if (i+1 < right)
+				outFile = commands[i+1];
+			else return ERROR_MISS_PARAMETER; // 重定向符号后缺少文件名
+				
+			if (endIdx == right) endIdx = i;
+		}
+	}
+	/* 处理重定向 */
+	if (inNum == 1) {
+		FILE* fp = fopen(inFile, "r");
+		if (fp == NULL) // 输入重定向文件不存在
+			return ERROR_FILE_NOT_EXIST;
+		
+		fclose(fp);
+	}
+	
+	if (inNum > 1) { // 输入重定向符超过一个
+		return ERROR_MANY_IN;
+	} else if (outNum > 1) { // 输出重定向符超过一个
+		return ERROR_MANY_OUT;
+	}
+
+	int result = RESULT_NORMAL;
+	pid_t pid = vfork();
+	if (pid == -1) {
+		result = ERROR_FORK;
+	} else if (pid == 0) {
+		/* 输入输出重定向 */
+		if (inNum == 1)
+			freopen(inFile, "r", stdin);
+		if (outNum == 1)
+			freopen(outFile, "w", stdout);
+
+		/* 执行命令 */
+		char* comm[BUF_SZ];
+		for (int i=left; i<endIdx; ++i)
+			comm[i] = commands[i];
+		comm[endIdx] = NULL;
+		execvp(comm[left], comm+left);
+		exit(errno); // 执行出错，返回errno
+	} else {
+		int status;
+		waitpid(pid, &status, 0);
+		int err = WEXITSTATUS(status); // 读取子进程的返回码
+
+		if (err) { // 返回码不为0，意味着子进程执行出错，用红色字体打印出错信息
+			printf("\e[31;1mError: %s\n\e[0m", strerror(err));
+		}
+	}
+
+
+	return result;
+}
+
+int callCd(int commandNum) { // 执行cd命令
+	int result = RESULT_NORMAL;
+
+	if (commandNum < 2) {
+		result = ERROR_MISS_PARAMETER;
+	} else if (commandNum > 2) {
+		result = ERROR_TOO_MANY_PARAMETER;
+	} else {
+		int ret = chdir(commands[1]);
+		if (ret) result = ERROR_WRONG_PARAMETER;
+	}
+
+	return result;
 }
