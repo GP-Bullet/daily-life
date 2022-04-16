@@ -158,7 +158,7 @@ int isCommand(const char* command){
         if(pid==-1){
             result=FALSE;
         }else if(pid==0){
-            //将结果输出重定向到文件描述符
+                           //将结果输出重定向到文件描述符
             close(fds[0]);
             dup2(fds[1],STDOUT_FILENO);
             close(fds[1]);
@@ -182,7 +182,6 @@ int isCommand(const char* command){
         dup2(inFd,STDIN_FILENO);
         dup2(outFd,STDOUT_FILENO);
     }
-
     return result;
 }   
 
@@ -240,27 +239,27 @@ int call_command(int commandNum){
         return WEXITSTATUS(status);
     }
 }
+
+
 int command_PIPE(int left,int right){
     if(left>=right){
         return RESULT_NORMAL;
     } 
-    int pipe_wh=-1;   //-1?
-    
+    int pipe_wh=-1;   //-1
 
     for(int i=left;i<right;++i){
-        if(strcmp(commands[i],COMMAND_PIPE)==0){//非要调个函数？
+        if(strcmp(commands[i],COMMAND_PIPE)==0){//调个函数？
             pipe_wh=i;
             break;
         }
     }
 
     if(pipe_wh==-1){//不含管道
-        return command_Redirect(left,right); //递归
+        return command_Redirect(left,right); 
     }else if(pipe_wh+1==right){
         return ERROR_PIPE_MISS_PARAMETER;
     }
 
-    /*执行命令*/
 
     int fds[2];
     if(pipe(fds)==-1){
@@ -268,7 +267,7 @@ int command_PIPE(int left,int right){
     }
 
     int result=RESULT_NORMAL;
-    pid_t pid= vfork();   //不用fork?
+    pid_t pid= vfork();   //fork?
     if(pid==-1){
         result=ERROR_FORK;
     }else if(pid==0){//子进程执行单个命令
@@ -284,11 +283,12 @@ int command_PIPE(int left,int right){
         int exitCode=WEXITSTATUS(status);    //?wait
 
         if(exitCode != RESULT_NORMAL){//子进程的指令未正常退出,打印错误信息
-            char info[4096]={0};  //一个页表有
+            char info[4096]={0};  //一个页表有4096
             char line[BUF_SZ];
             close(fds[1]);
             dup2(fds[0],STDIN_FILENO);//将标准输入重定向到fds[0]
             close(fds[0]);
+
             while(fgets(line,BUF_SZ,stdin)!=NULL){//读取子进程错误信息
                 strcat(info,line);
             }
@@ -299,6 +299,7 @@ int command_PIPE(int left,int right){
             close(fds[1]);
             dup2(fds[0],STDIN_FILENO);
             close(fds[0]);
+
             result=command_PIPE(pipe_wh+1,right);//递归
             //开始时没有+1
         }
@@ -312,7 +313,7 @@ int command_Redirect(int left,int right){
     if(!isCommand(commands[left])){
         return ERROR_COMMAND;
     }
-    /*判断重定向*/
+    //判断重定向
 
     int inNum=0,outNum=0;
     char *inFile=NULL,*outFile=NULL;
@@ -338,7 +339,7 @@ int command_Redirect(int left,int right){
         }
     }
 
-    /*处理重定向*/
+    //处理重定向
 
 //?文件的一些函数用什么比较好
 
