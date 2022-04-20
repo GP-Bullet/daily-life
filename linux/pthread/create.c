@@ -9,7 +9,7 @@ void *th_fun(void*arg){
     printf("thread ID=%x\n",(unsigned int)pthread_self()); //线程里面的线程号
     printf("thread *arg =%d\n",*p);
 
-    //sleep(1);
+    
    // while(1);
 }
 
