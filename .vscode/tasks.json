@@ -3,7 +3,7 @@
     "tasks": [
         {
             "label": "Build",
-            "command": "gcc",
+            "command": "g++",
             "args": [
                 "${file}",
                 "-o",
