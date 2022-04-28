@@ -7,7 +7,6 @@
 
 #define MAXSIZE 4096
 
-
 pthread_mutex_t lock=PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t has_product=PTHREAD_COND_INITIALIZER;
 
