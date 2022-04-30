@@ -46,7 +46,7 @@ void SPSCQueuePush(SPSCQueue *pool, void *s)
         pthread_mutex_unlock(&lock);
 
         pthread_cond_signal(&has_product);//将等待在该条件变量上的一个线程唤醒
-        sleep(rand()%5);
+        //sleep(rand()%5);
     
     }
 

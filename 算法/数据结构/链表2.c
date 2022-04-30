@@ -196,7 +196,7 @@ void write(Node*head,char*filename){
     fp=fopen(filename,"w");
 
     //2.写文件
-    while()
+    
 
     //3.关闭文件
     fclose(fp);
