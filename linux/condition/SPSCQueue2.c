@@ -71,7 +71,7 @@ void *SPSCQueuePop(SPSCQueue *pool)
     pthread_mutex_unlock(&lock);
     printf("-Consume %lu ---%d\n",pthread_self(),pool->data);
     free(pool);
-    sleep(rand()%5);        //?
+    sleep(rand()%5);        
 
 }
 
