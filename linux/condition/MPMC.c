@@ -3,6 +3,9 @@
 #include<stdlib.h>
 #include<unistd.h>
 #include<string.h>
+//模型有什么用
+//管道
+
 //因为是有限缓冲问题，有可能会被放满，所以不能用链式队列
 //故才用循环队列
 
@@ -12,6 +15,11 @@
 //结构体怎么定义
 //队列
 //void*?
+
+//死锁有几种情况：对一个锁反复lock 
+//进程和线程和内核                      
+//我们用进程去做什么用线程去做什么
+
 
 #define MAXSIZE 8
 
@@ -42,7 +50,7 @@ SPSCQueue *SPSCQueueInit()
     SPSCQueue * pool=(SPSCQueue *)malloc(sizeof(SPSCQueue));
     (pool->q)=(int *)malloc(sizeof(int)*2);
     pool->num=0;
-    memset(pool->q,0,sizeof(pool->q));
+    memset(pool->q,0,sizeof(pool->q)); 
     return pool;
     
 }
@@ -58,7 +66,7 @@ void SPSCQueuePush(SPSCQueue *pool, void *s)
         
         pthread_mutex_lock(&lock);
         while(pool->num>=MAXSIZE){//队列满
-            pthread_cond_signal(&empty);
+            pthread_cond_signal(&empty);    
             printf("queue full,consume data,product stop!\n");
             pthread_cond_wait(&full,&lock);//生产者等待
         }

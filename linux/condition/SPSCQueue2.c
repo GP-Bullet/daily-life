@@ -23,7 +23,7 @@ struct SPSCQueue{
     /* Define Your Data Here */
     int front;
     int rear;
-    QElemType data[4096];
+    QElemType data[8];
 }typedef SPSCQueue;
 
 
