@@ -12,14 +12,15 @@
 //结构体怎么定义
 //队列
 //void*?
+//什么时候用到锁
+//锁是怎么实现的
 #define MAXSIZE 8
 
 pthread_cond_t full;
 pthread_cond_t empty;
 pthread_mutex_t lock;
+//强锁
 
-
-typedef int QElemType; 
 
 struct SPSCQueue{
     /* Define Your Data Here */
@@ -40,7 +41,7 @@ SPSCQueue *SPSCQueueInit()
     pthread_cond_init(&empty,NULL);
 
     SPSCQueue * pool=(SPSCQueue *)malloc(sizeof(SPSCQueue));
-    (pool->q)=(int *)malloc(sizeof(int)*8);
+    (pool->q)=(int *)malloc(sizeof(int)*2);
     pool->num=0;
     memset(pool->q,0,sizeof(pool->q));
     return pool;
@@ -51,7 +52,7 @@ SPSCQueue *SPSCQueueInit()
 void SPSCQueuePush(SPSCQueue *pool, void *s)
 {   
     
-    //srand((unsigned long)time(NULL));
+    srand((unsigned long)time(NULL));
     
     for(;;){
         
@@ -60,7 +61,7 @@ void SPSCQueuePush(SPSCQueue *pool, void *s)
         while(pool->num>=MAXSIZE){//队列满
             pthread_cond_signal(&empty);
             printf("queue full,consume data,product stop!");
-            pthread_cond_wait(&empty,&lock);
+            pthread_cond_wait(&full,&lock);//生产者等待
         }
         //队列不满
         //生产者插入数据
@@ -78,8 +79,8 @@ void SPSCQueuePush(SPSCQueue *pool, void *s)
 
 void *SPSCQueuePop(SPSCQueue *pool)
 {   
-    SPSCQueue *bq=(SPSCQueue*)pool;
-    int data;
+    
+    
     for(;;){
         pthread_mutex_lock(&lock);
         while(pool->num==0){//队列是空的
@@ -91,7 +92,7 @@ void *SPSCQueuePop(SPSCQueue *pool)
         //消费
         (pool->num)--;
         printf("consume data %d\n",pool->q[pool->num]);
-        pthread_cond_signal(&full);
+        pthread_cond_signal(&full);//通知生产者
         pthread_mutex_unlock(&lock);
     }
     
@@ -110,12 +111,12 @@ void SPSCQueueDestory(SPSCQueue *pool)
 }
 
 int main(){
-    
+    SPSCQueue *pool;
     
     int ret;
     pthread_t pid,cid;
-    SPSCQueue *pool;
-    SPSCQueueInit();
+    
+    pool=SPSCQueueInit();
 
     ret=pthread_create(&pid,NULL,(void*)SPSCQueuePush,pool);
     if(ret!=0){
@@ -130,6 +131,9 @@ int main(){
     pthread_join(pid,NULL);
     pthread_join(cid,NULL);
 
+
+
     SPSCQueueDestory(pool);
+
     return 0;
 }
