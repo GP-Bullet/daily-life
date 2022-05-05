@@ -1,0 +1,63 @@
+#include<string>
+#include<iostream>
+using namespace std;
+
+int main(){
+
+/* string s1;
+    string s2;
+    cin>>s1>> s2;
+    cout<<s1<<'\n'<<s2<<endl;//输出流
+
+    //读取未知数量
+    string word;
+    while(cin>>word){
+        cout<<word<<endl;
+    }
+    
+//为什么会结束，为什么会换行
+//?endl*/
+/*
+
+    //getline 保留空白符
+    string line;
+    //每次读入一整行，直至到达文件末尾
+
+    //
+
+    while(getline(cin,line)){
+        if(!line.empty()&&line.size()<10){//只输出非空的行
+            cout<<line<<endl;
+        }
+        
+    }
+    
+//?一整行有多大
+
+//比较string
+//赋值
+//相加
+
+//?\n  \0有没有
+
+    string s1="hello,   ",s2="world";
+    string s3=s1+s2;
+    cout<<s3<<endl;
+    s1+=s2;
+    cout<<s1<<s2<<endl;
+    s2+=s1;
+    cout<<s1<<endl<<s2;
+    s1=s2;
+    cout<<s1<<endl<<s2;
+*/
+
+
+//?字符串字面值与string
+
+//*处理string中的字符
+
+
+
+
+return 0;
+}

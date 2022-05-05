@@ -22,7 +22,7 @@ int main(){
     }
     for(int i=0;i<n;i++){
         for(int j=0;j<n;j++){
-            printf("%2  d ",g[i][j]);
+            printf("%2d ",g[i][j]);
         }
         printf("\n");
     }
