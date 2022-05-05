@@ -19,6 +19,7 @@ int main(){
 //?endl*/
 /*
 
+
     //getline 保留空白符
     string line;
     //每次读入一整行，直至到达文件末尾
@@ -49,15 +50,44 @@ int main(){
     cout<<s1<<endl<<s2;
     s1=s2;
     cout<<s1<<endl<<s2;
-*/
+
+
+
+
+#include<cctype>
+//处理每个字符,范围for
+string s = "ab\0c";
+string s1="c";
+cout<<s + s1;
+
+
+
+
 
 
 //?字符串字面值与string
 
 //*处理string中的字符
+    string str("some string");
+    for(auto c:str){
+        cout << c << endl;
+
+    }
+    for(int i=0;;i++){
+        if(str[i]=='\0'){
+            cout<<"lalalla"<<endl;
+            break;
+        }
+        cout<<str[i]<<endl;
+    }
+    char str1[20]="some string";
+    for(int i=0;str1[i]=='\0';i++){
+        printf("%c ",str[i]);
+    }
+    return 0;
+!啊到底有没有\0*/
 
 
 
 
-return 0;
 }
