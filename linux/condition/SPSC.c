@@ -34,12 +34,12 @@ struct SPSCQueue{
 }typedef SPSCQueue;
 
 
-SPSCQueue *SPSCQueueInit();
+SPSCQueue *SPSCQueueInit(int capacity);
 void *SPSCQueuePop(SPSCQueue *pool);
 void SPSCQueuePush(SPSCQueue *pool, void *s);
 void SPSCQueueDestory(SPSCQueue *pool);
 
-SPSCQueue *SPSCQueueInit()
+SPSCQueue *SPSCQueueInit(int capacity)
 {   
     pthread_mutex_init(&lock,NULL);
     pthread_cond_init(&full,NULL);
@@ -104,6 +104,12 @@ void *SPSCQueuePop(SPSCQueue *pool)
                                     
 
 }
+void* consumer(void* arg){
+    
+}
+void* produceter(void* arg){
+
+}
 
 void SPSCQueueDestory(SPSCQueue *pool)
 {
@@ -115,13 +121,16 @@ void SPSCQueueDestory(SPSCQueue *pool)
     
 }
 
+
+
+
 int main(){
     SPSCQueue *pool;
-    
+    int n;
     int ret;
     pthread_t pid,cid;
     
-    pool=SPSCQueueInit();
+    pool=SPSCQueueInit(n);
 
     ret=pthread_create(&pid,NULL,(void*)SPSCQueuePush,pool);
     if(ret!=0){
