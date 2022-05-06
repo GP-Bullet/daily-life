@@ -5,11 +5,21 @@
 #include<string.h>
 #include<unistd.h>
 #include<arpa/inet.h>
+#include<stdlib.h>
+
+#include<fcntl.h>
 #define SERVER_PORT 8000
-int main(){
+#define MAXLEN 4096
+int main(int argc,char **argv){
     struct sockaddr_in severaddr;
     int confd;
+    int len;
     char ipstr[]="192.168.30.144";
+    char buf[MAXLEN];
+    if(argc<2){
+        printf("./client str\n");
+        exit(1);
+    }
     //1.创建一个socket
     confd=socket(AF_INET,SOCK_STREAM,0);
     //2.connect前知道自己服务器的ip和端口号
@@ -24,6 +34,9 @@ int main(){
     connect(confd,(struct sockaddr*)&severaddr,sizeof(severaddr));//fd，地址记得强转，结构体长度
 
     //4.请求服务器处理数据
+    write(confd,argv[1],strlen(argv[1]));
+    len=read(confd,buf,sizeof(buf));
+    write(STDOUT_FILENO,buf,len);
 
     //5.关闭socket
     close(confd);

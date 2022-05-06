@@ -6,14 +6,18 @@
 #include<arpa/inet.h>//inet_ntop
 #include<sys/types.h>//fd
 #include<unistd.h>
-
+#include<ctype.h>
 
 
 #define SERVER_PORT 8000
+#define MAXLINE 4096
 int main(){
     struct sockaddr_in severaddr,clientaddr;//
     int sockfd,addrlen,confd;
+    int len,i;
     char ipstr[128];
+
+    char buf[MAXLINE];
     //1.socket
     sockfd=socket(AF_INET,SOCK_STREAM,0);  //IPv4 TCP
     //2.bind
@@ -50,8 +54,17 @@ int main(){
         
         //交换数据用confd
         //5、处理客户端请求
-        /*
-        */
+        //转成大写回送
+        
+        len =read(confd,buf,sizeof(buf));//返回读到字节长度
+        i=0;
+        while(i<len){
+            buf[i]=toupper(buf[i]);//转大写一次一个字符
+
+            i++;
+        }
+        write(confd,buf,len);
+
 
         close(confd);
     }
