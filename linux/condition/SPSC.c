@@ -29,32 +29,32 @@ pthread_mutex_t lock;
 
 struct SPSCQueue{
     /* Define Your Data Here */
-    int *q;
+    int *q;//?                  
     int num;
 }typedef SPSCQueue;
 
 
 SPSCQueue *SPSCQueueInit(int capacity);
-void *SPSCQueuePop(SPSCQueue *pool);
-void SPSCQueuePush(SPSCQueue *pool, void *s);
-void SPSCQueueDestory(SPSCQueue *pool);
+void *SPSCQueuePop(SPSCQueue *queue);
+void SPSCQueuePush(SPSCQueue *queue, void *s);
+void SPSCQueueDestory(SPSCQueue *queue);
 
 SPSCQueue *SPSCQueueInit(int capacity)
 {   
-    pthread_mutex_init(&lock,NULL);
+    pthread_mutex_init(&lock,NULL); 
     pthread_cond_init(&full,NULL);
     pthread_cond_init(&empty,NULL);
 
-    SPSCQueue * pool=(SPSCQueue *)malloc(sizeof(SPSCQueue));
-    (pool->q)=(int *)malloc(sizeof(int)*2);
-    pool->num=0;
-    memset(pool->q,0,sizeof(pool->q));
-    return pool;
+    SPSCQueue * queue=(SPSCQueue *)malloc(sizeof(SPSCQueue));//?
+    (queue->q)=(int *)malloc(sizeof(int));//?
+    queue->num=0;
+    memset(queue->q,0,sizeof(queue->q));
+    return queue;
     
 }
 
 
-void SPSCQueuePush(SPSCQueue *pool, void *s)
+void SPSCQueuePush(SPSCQueue *queue, void *s)
 {   
     
     srand((unsigned long)time(NULL));
@@ -63,16 +63,16 @@ void SPSCQueuePush(SPSCQueue *pool, void *s)
         
         
         pthread_mutex_lock(&lock);
-        while(pool->num>=MAXSIZE){//队列满
+        while(queue->num>=MAXSIZE){//队列满
             pthread_cond_signal(&empty);
             printf("queue full,consume data,product stop!");
             pthread_cond_wait(&full,&lock);//生产者等待
         }
         //队列不满
         //生产者插入数据
-        pool->q[(pool->num)]=rand()%1000;
-        printf("produce data %d\n",pool->q[pool->num]);
-        (pool->num)++;
+        queue->q[(queue->num)]=rand()%1000;
+        printf("produce data %d\n",queue->q[queue->num]);
+        (queue->num)++;
         pthread_cond_signal(&empty);
         pthread_mutex_unlock(&lock);
         
@@ -82,21 +82,21 @@ void SPSCQueuePush(SPSCQueue *pool, void *s)
     
 }
 
-void *SPSCQueuePop(SPSCQueue *pool)
+void *SPSCQueuePop(SPSCQueue *queue)
 {   
     
     
     for(;;){
         pthread_mutex_lock(&lock);
-        while(pool->num==0){//队列是空的
+        while(queue->num==0){//队列是空的
             pthread_cond_signal(&full);
             printf("queue empty,product data,consume stop!");
             pthread_cond_wait(&empty,&lock);
         }
         //队列不为空
         //消费
-        (pool->num)--;
-        printf("consume data %d\n",pool->q[pool->num]);
+        (queue->num)--;
+        printf("consume data %d\n",queue->q[queue->num]);
         pthread_cond_signal(&full);//通知生产者
         pthread_mutex_unlock(&lock);
     }
@@ -104,20 +104,16 @@ void *SPSCQueuePop(SPSCQueue *pool)
                                     
 
 }
-void* consumer(void* arg){
-    
-}
-void* produceter(void* arg){
 
-}
 
-void SPSCQueueDestory(SPSCQueue *pool)
+void SPSCQueueDestory(SPSCQueue *queue)
 {
     pthread_mutex_destroy(&lock);
     pthread_cond_destroy(&empty);
     pthread_cond_destroy(&full);
-    free(pool->q);
-    free(pool);
+
+    free(queue->q);
+    free(queue);
     
 }
 
@@ -125,21 +121,23 @@ void SPSCQueueDestory(SPSCQueue *pool)
 
 
 int main(){
-    SPSCQueue *pool;
+    SPSCQueue *queue;
     int n;
+    printf("The capacity is\n");
+    scanf("%d",&n);
     int ret;
     pthread_t pid,cid;
     
-    pool=SPSCQueueInit(n);
+    queue=SPSCQueueInit(n);
 
-    ret=pthread_create(&pid,NULL,(void*)SPSCQueuePush,pool);
+    ret=pthread_create(&pid,NULL,(void*)SPSCQueuePush,queue);
     if(ret!=0){
-        printf("pthread_create push\n");
+        printf("pthread_create producter\n");
     }
     
-    ret=pthread_create(&cid,NULL,(void*)SPSCQueuePop,pool);
+    ret=pthread_create(&cid,NULL,(void*)SPSCQueuePop,queue);
     if(ret!=0);{
-        printf("pthread_create pop\n");
+        printf("pthread_create consumer\n");
     }
 
     pthread_join(pid,NULL);
@@ -147,7 +145,7 @@ int main(){
 
 
 
-    SPSCQueueDestory(pool);
+    SPSCQueueDestory(queue);
 
     return 0;
 }
