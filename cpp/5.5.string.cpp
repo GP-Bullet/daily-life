@@ -87,7 +87,8 @@ cout<<s + s1;
     return 0;
 !啊到底有没有\0*/
 
-
+    string s("Hello World!!!");
+    for(auto &c:s)
 
 
 }
