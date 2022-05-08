@@ -18,9 +18,14 @@ pthread_mutex_t chop[5];
 
 
 void* philosopher(void *arg){
+
     int i=*(int *)arg;
     int left=i;
     int right=(i+N-1)%N;
+while(1)
+{
+
+
     sleep(1);
     printf("%d is thinking\n",i);
     printf("%d is hungry\n",i);
@@ -31,14 +36,16 @@ void* philosopher(void *arg){
     pthread_mutex_lock(&chop[right]);
     printf("%d fetch %d chop\n",i,right);
     //eat()
-    sleep(1);
     printf("%d is eating \n",i);
+    sleep(1);
+    
     pthread_mutex_unlock(&chop[left]);
     printf("%d realese %d (left)chop\n",i,left);
     sem_post(&sem);//放下了左边的筷子，多一个线程来拿左筷子
     printf("sem ++\n");
     pthread_mutex_unlock(&chop[right]);
     printf("%d realese %d (right)chop\n",i,right);
+}
 }
 int main(){
     pthread_t pid[N];

@@ -32,7 +32,7 @@ pthread_mutex_t chop[N];
 
 
 void* philosopher(void *arg){
-    int i=*(int*)arg;//这样搞
+    int i=*(int*)arg;//这样搞   
     int left =i;//i哲学家左手筷子的编号
     int right=(i+N-1)%N;
 
@@ -53,7 +53,7 @@ void* philosopher(void *arg){
             sleep(1);
             pthread_mutex_unlock(&chop[left]);//?先后有讲究吗
             printf("philosopher %d fetches chopstick %d\n",i,left);
-            
+                    
             pthread_mutex_unlock(&chop[right]);
             printf("philosopher %d fetches chopstick %d\n",i,right);
         }else{//奇数先左后右
