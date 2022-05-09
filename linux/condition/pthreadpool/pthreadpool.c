@@ -9,9 +9,10 @@ makefile
 
 typedef struct Task
 {
-    void (*function)(void* arg);
+    void (*function)(void* arg);//保存地址
     void* arg;//保存实参地址
 }Task;
+
 const int NUMBER=2;
 
 //线程池结构体
@@ -41,18 +42,18 @@ struct ThreadPool
     
 };
 
-ThreadPool*  ThreadPoolCreate(int min,int max,int queSize)
+ThreadPool*  ThreadPoolCreate(int min,int max,int queueSize)
 {   ThreadPool*pool=(ThreadPool*)malloc(sizeof(ThreadPool));
     do{
         
         if(pool==NULL){
             printf("malloc pthreadpool fail...\n");
-            return NULL;
+            break;
         }
         pool->threadIDs=(pthread_t *)malloc(sizeof(pthread_t)*max);
         if(pool->threadIDs==NULL){
             printf("malloc threadIDs fail...\n");
-            return NULL;
+            break;
         }
         memset(pool->threadIDs,0,sizeof(pthread_t)*max);
         pool->minNum=min;
@@ -64,24 +65,31 @@ ThreadPool*  ThreadPoolCreate(int min,int max,int queSize)
         if( pthread_mutex_init(&pool->mutexPool,NULL)!=0||
             pthread_mutex_init(&pool->mutexBusy,NULL)!=0||
             pthread_cond_init(&pool->notEmpty,NULL)!=0||
-            pthread_cond_init(&pool->notFull,NULL)!=0){
+            pthread_cond_init(&pool->notFull,NULL)!=0)
+            {
                 printf("mutex or condition init fail..\n");
-                return 0;
+                break;
             }
         //任务队列
-        pool->taskQ=(Task*)malloc(sizeof(Task)*pool->queueSize);
-        pool->queueCapacity=pool->queueSize;
+        pool->taskQ=(Task*)malloc(sizeof(Task)*pool->queueSize);//!
+        pool->queueCapacity=queueSize;      //!
         pool->queueSize=0;
         pool->queueFront=0;
         pool->queueRear=0;
 
 
         pool->shutdown=0;
-
+        int ret;
         //创建线程
-        pthread_create(&pool->managerID,NULL,manager,pool);
+        ret=pthread_create(&pool->managerID,NULL,manager,pool);
+        if(ret!=0){
+            printf("manager create fail\n");
+        }
         for(int i=0;i<min;++i){
-            pthread_create(&pool->threadIDs[i],NULL,worker,pool);  
+            ret=pthread_create(&pool->threadIDs[i],NULL,worker,pool); 
+            if(ret!=0){
+                printf("worker create fail\n");
+            }
         }
         return pool;
     }while(0);
@@ -95,27 +103,31 @@ ThreadPool*  ThreadPoolCreate(int min,int max,int queSize)
     return NULL;
 }
 
-void threadPoolAdd(ThreadPool* pool,void(*func)(void*),void*arg)
+void threadPoolAdd(ThreadPool* pool,void (*func)(void*),void*arg)
 {
     pthread_mutex_lock(&pool->mutexPool);
     while(pool->queueSize==pool->queueCapacity&&!pool->shutdown){
         //满了,生产者阻塞
+        printf("hfjdshk\n");
         pthread_cond_wait(&pool->notFull,&pool->mutexPool);
+        printf("hfjdskhakjf\n");
     }
     if(pool->shutdown){
         pthread_mutex_unlock(&pool->mutexPool);
         return ;
     }
     //添加任务
-    pool->taskQ[pool->queueRear].function=func;//添加到队尾 函数指针保存
+    printf("pool->queueRear = %d\n", *(int*)arg);
+    pool->taskQ[pool->queueRear].function=func;         //添加到队尾 函数指针保存
     pool->taskQ[pool->queueRear].arg=arg;
     //queueRear向后移动 
-    pool->queueRear=pool->queueRear+1%pool->queueCapacity;
+    pool->queueRear=(pool->queueRear+1)%pool->queueCapacity;
 
     pool->queueSize++;//任务+1
 
     //唤醒阻塞的工作线程（消费者）
     pthread_cond_signal(&pool->notEmpty);
+
     pthread_mutex_unlock(&pool->mutexPool);
 }
 int threadPoolDestory(ThreadPool*pool){
@@ -193,7 +205,6 @@ void* worker(void* arg)
             }
 
         }
-
         //判断是否被关闭
         if(pool->shutdown){
             pthread_mutex_unlock(&pool->mutexPool);
@@ -215,16 +226,20 @@ void* worker(void* arg)
         
         printf("thread %lu start working...\n",pthread_self());
         pthread_mutex_lock(&pool->mutexBusy);
-        pool->busyNum++;
+        pool->busyNum++;//忙线程+1
         pthread_mutex_unlock(&pool->mutexBusy);
-        task.function(task.arg);
-        free(task.arg);//堆内存
+        printf("task.arg = %p \n", task.arg);
+        //调用函数
+        task.function(task.arg);//?
+        printf("task.arg = %p \n", task.arg);
+       // free(task.arg);                       //*任务函数传的参数是堆内存
+        //!这里free的是num
         task.arg=NULL;
 
-        printf("thread %ld end working...\n",pthread_self());
-        pthread_mutex_lock(&pool->mutexBusy);
-        pool->busyNum--;//?
 
+        printf("thread %ld end working...\n",pthread_self());//做完之后 忙线程-1
+        pthread_mutex_lock(&pool->mutexBusy);
+        pool->busyNum--;
         pthread_mutex_unlock(&pool->mutexBusy);
     }
 }
@@ -235,7 +250,6 @@ void* manager(void* arg)
     while(!pool->shutdown){
         //3秒检测一次
         sleep(3);
-        
         //取数据
         //加锁 在读这些数据时 可能别的线程在写这些数据
         
@@ -303,22 +317,26 @@ void threadExit(ThreadPool* pool)
 void taskFuction(void *arg)
 {   
     int num=*(int *)arg;
-    printf("thread %lu is working,number=%d\n",pthread_self(),num);
-    usleep(1000);
+    printf("thread %lu is working, number=%d\n",pthread_self(),num);
+    sleep(1);
 }
 
 int main()
 {
     //创建线程池
     ThreadPool* pool=ThreadPoolCreate(3,10,100);//最小线程数
+    
+    int *num=(int *)malloc(sizeof(int) * 100);
     for(int i=0;i<100;i++){
-        int *num=(int *)malloc(sizeof(int));
-        *num=i+100;
-        threadPoolAdd(pool,taskFuction,num);
+        num[i]=i;
+        threadPoolAdd(pool,taskFuction,(void*)&num[i]);
     }
-
+    
+    //free(num);
+    
     sleep(30);//?
-
+    
     threadPoolDestory(pool);
+    //free(num);
     return 0;
 }
