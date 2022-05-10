@@ -40,7 +40,7 @@ void* philosopher(void *arg){
 //?哪里来的5
     while(1){
         printf("%d philosopher is thinking\n",i);
-        sleep(1);
+        //sleep(1);
 
         printf("philosopher %d is hungry\n",i);
         if(i%2==0){//偶数先右后左
@@ -50,7 +50,7 @@ void* philosopher(void *arg){
             printf("philosopher %d fetches chopstick %d\n",i,left);
             //eat();
             printf("philosopher %d is eating\n",i);
-            sleep(1);
+            //sleep(1);
             pthread_mutex_unlock(&chop[left]);//?先后有讲究吗
             printf("philosopher %d fetches chopstick %d\n",i,left);
                     
@@ -63,7 +63,7 @@ void* philosopher(void *arg){
             printf("philosopher %d fetches chopstick %d\n",i,right);
             //eat();
             printf("philosopher %d is eating\n",i);
-            sleep(1);
+            //sleep(1);
             pthread_mutex_unlock(&chop[right]);
             printf("philosopher %d fetches chopstick %d\n",i,right);
             pthread_mutex_unlock(&chop[left]);
@@ -79,7 +79,7 @@ int main(){
     int i;
     for(i=0;i<5;i++){
         pthread_mutex_init(&chop[i],NULL);
-        pthread_create(&pid[i],NULL,philosopher,(void*)&i);
+        pthread_create(&pid[i],NULL,philosopher,(void*)&i);//!危险
     }
 
     for(int i=0;i<5;i++){
