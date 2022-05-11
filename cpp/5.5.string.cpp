@@ -89,6 +89,16 @@ cout<<s + s1;
 
     string s("Hello World!!!");
     for(auto &c:s)
+        c=toupper(c);
+    cout<< s << endl;
 
+
+    using S =string;
+    S a("hello");
+    cout<<a<<endl;
+    
+//处理一部分字符 下标 或者迭代器
+//size返回一个无符号整型数
+//使用下标访问空string引发不可预知结果
 
 }
