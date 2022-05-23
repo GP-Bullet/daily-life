@@ -5,20 +5,25 @@ int cmp(const void*a,const void*b)
 {
     return strcmp((char*)a,(char*)b);
 }
-int main(void)
-{
-    char a[6][100]={0};
-    printf("请输入6个字符串:\n");
-    for(int i=0; i<6; i++)
-    {
+void Input(char* a[6]){
+
+    for(int i=0;i<6;i++){
         scanf("%s",a[i]);
     }
-
+}
+void sort(char* a[6]){
     qsort(a,6,100,cmp);
-    printf("按字典序排序后为:\n");
-    for(int i=0; i<6; i++)
-    {
+}
+void Output(char* a[6]){
+    for(int i=0;i<6;i++){
         printf("%s\n",a[i]);
     }
-    return 0;
 }
+int main(){
+    char *a[6];
+    Input(a);
+    sort(a);
+    Output(a);
+
+    return 0;
+} 

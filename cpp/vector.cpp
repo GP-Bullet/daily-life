@@ -30,7 +30,8 @@ for(decltype(ivec.size())ix=0;ix!=10;++ix){
     ivec.push_back(ix);//
 }*/
 
-//迭代器容器都可以用 ， 
+
+//!迭代器容器都可以用 ， for循环中 用！=更多迭代器的！= 
 
 
 int main(){
@@ -42,7 +43,26 @@ int main(){
     }*/string s("some thing");
     //遇到空白也停
     for(auto it=s.begin();it!=s.end()&& !isspace(*it);++it){
-        *it=toupper(*it);
+        *it=toupper(*it);   
     }
     cout<<s<<endl;
+    //无须知道迭代器的精准类型
+
+    //!常量指针
+
+
+//!迭代器只读不写最好使用常量类型（const_iterator）得到     cbegin cend
+
+    //auto it3=v.cbegin
+    //!(*it).empty()   == it->empty
+
+    //!但凡是使用了迭代器的循环体，都不要向迭代器所述的容器添加元素
+/*
+! string和vector有更多迭代运算
+    auto mid=vi.begin()+vi.size()/2;
+    difference_type
+    
+
+*/
+    
 }
