@@ -16,6 +16,14 @@ using namespace std;
 !2、不要利用拷贝构造函数 初始化匿名对象   Person(p3);   ==Person p3;
 
 */
+
+/*
+拷贝构造调用时机
+!1、给新对象
+!2、值传递的方式给函数参数传值    值传递会拷贝一个临时的副本出来  实参传给形参时，会拷贝临时的副本  会调用拷贝构造
+!3、值方式返回局部对象  值的方式返回 拷贝出一个新的
+
+*/
 class Person
 {
     
@@ -40,8 +48,15 @@ public:
     }
 
 };
+Person doWork(Person p){
+    Person p1;
 
+    return p1;
+}
 
+void test01(){
+    Person p=doWork();
+}
 int main(){
 
     //括号法
