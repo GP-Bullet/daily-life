@@ -10,7 +10,7 @@ int main()
             if(total.isbn()==trans.isbn()){
                 total+=trans;
             }else{
-                std::cout << total << std::endl;
+            std::cout << total << std::endl;
                 total=trans;
             }
         }

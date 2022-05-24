@@ -24,3 +24,46 @@ string strs[get_size()];
 
 C风格字符串不要用了
 */
+#include<iostream>
+#include<vector>
+#include<iterator>
+using namespace std;
+
+int main(){
+    /*
+    *1
+    const int size=10;
+    int arr[size];
+    for(auto it=arr;it!=arr+size;it++){
+        *it=0;
+    }
+    for(auto i:arr){
+        cout <<i<<" ";
+    }
+
+    cout<<endl;
+    */
+    /*
+    *2
+    vector<int>v={0,1,2,3,4,5,6,7,8,9};
+    int arr[10];
+   // for(auto it=arr;it!=arr+10;it++){
+    //    *it=
+    //}
+    for(int i=0;i!=v.size();i++){
+        arr[i]=v[i];
+    }
+    */
+
+    //数组给vector赋值
+
+    int arr[]={0,1,2,3,4,5,6,7,8,9};
+    vector<int>v(begin(arr),end(arr));
+
+    for(auto i:v){
+        cout<< i <<" ";
+    }
+    cout<<endl;
+    
+    return 0;
+}
