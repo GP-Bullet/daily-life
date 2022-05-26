@@ -5,14 +5,21 @@ using namespace std;
 
 
 /*
-成员变量和成员函数分开存储
+!成员变量和成员函数分开存储   sizeof
 !只有非静态成员 属于类的对象上
 
 
-this指针 
+!this指针    指针常量 （指针的指向不可以修改）    const(指针指向的值也不可以修改)  Person *const this this     void showPerson() const{}
+?this不是能改
+!mutable int m_B  常函数中可以修改    
+!常对象 const Person p;  在对象前加const   常对象只能调用常函数
+
+
 解决名称冲突
 返回对象本身
 隐含在每个成员函数内部
+
+
 */
 
 class Person{
