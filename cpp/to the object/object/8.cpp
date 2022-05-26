@@ -24,6 +24,7 @@ using namespace std;
 !3、值方式返回局部对象  值的方式返回 拷贝出一个新的
 
 */
+
 class Person
 {
     
@@ -57,6 +58,8 @@ Person doWork(Person p){
 void test01(){
     Person p=doWork();
 }
+
+
 int main(){
 
     //括号法
@@ -74,7 +77,6 @@ int main(){
     //隐式转换法
     Person p4=10;  //Person p4=Person(10);
     Person p5=p4;
-
 
     return 0;
 }

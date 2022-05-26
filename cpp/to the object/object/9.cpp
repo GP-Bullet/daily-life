@@ -20,6 +20,7 @@ if(m_Height != NULL){
 class Person
 {
 public:
+
     Person(int a);
     int m_A;
     int m_B;
