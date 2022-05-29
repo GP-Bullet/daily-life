@@ -1,28 +1,53 @@
 #include<stdio.h>
-#include<math.h>
-struct point
-{
-	float x,y;
-};
-struct line
-{
-	struct point p1,p2,p3;
-	float length;
-};
+#define M 3
+#define N 4
+
+int max,min;
+
+void fun(int a[][N],int *b){
+
+	int  i,j;
+	for(i=0; i<N; i++) {
+		b[i]=a[0][i];
+		for(j=1; j<M; j++){
+			if(b[i]< a[j][i])
+				b[i]=a[j][i];
+		}
+            
+	}
+	
+	min=b[0];
+	max=b[0];
+	for(int i=0;i<4;i++){
+		if(b[i]>max)
+            max=b[i];
+        if(b[i]<min)
+            min=b[i];
+		
+	}
+}
+
 int main()
 {
-	struct line a,b,c;
-	printf("Please input x,y for the point #1:");
-	scanf("%f %f",&a.p1.x,&a.p1.y);
-	printf("Please input x,y for the point #2:");
-	scanf("%f %f",&b.p2.x,&b.p2.y);
-	printf("Please input x,y for the point #3:");
-	scanf("%f %f",&c.p3.x,&c.p3.y);
-	a.length=(float)sqrt((a.p1.x-a.p2.x)*(a.p1.x-a.p2.x)+(a.p1.y-a.p2.y)*(a.p1.y-a.p2.y));
-	b.length=(float)sqrt((b.p1.x-b.p3.x)*(b.p1.x-b.p3.x)+(b.p1.y-b.p3.y)*(b.p1.y-b.p3.y));
-	c.length=(float)sqrt((c.p2.x-c.p3.x)*(c.p2.x-c.p3.x)+(c.p2.y-c.p3.y)*(c.p2.y-c.p3.y));
-	float l;
-	l=a.length+b.length+c.length;
-	printf("l=%.2f\n",l);
+	
+	int a[M][N],b[N],i,j;
+	for(i=0;i<M;i++){
+		for(j=0;j<N;j++){
+			scanf("%d",&a[i][j]);
+		}
+	}
+	printf("The original data is:\n");
+	for(i=0;i<M;i++){
+		for(j=0;j<N;j++){
+			printf((j==N-1)?"%6d\n":"%6d",a[i][j]);//这里妙呀
+		}
+	}
+	fun(a,b);
+
+	printf("\nThe result is:\n");
+	for(i=0;i<N;i++)
+		printf("%4d",b[i]);
+	printf("\nmax=%d,min=%d\n",max,min);
+
 	return 0;
 }
