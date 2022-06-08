@@ -7,7 +7,7 @@ struct li
     struct li *next;
 };
 
-
+ 
 struct li* create()
 {   
     struct li*head;
