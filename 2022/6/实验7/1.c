@@ -1,69 +1,66 @@
-#include<stdio.h>
-#include<stdlib.h>
-//综合题
 
-//如果不分配内存会怎样
+#include <stdio.h>
+#include <malloc.h>
 
-#define LEN sizeof(struct friend)
-struct friend{
-    int num;
-    struct friend *next;
-};
+typedef struct Node
+{
+    int data;
+    struct Node *next;
+} Node, *List;
 
-struct friend *head,*tail;
+void calculate(List L, int *max, int *min, double *average);
+void destroy(List L);
 
-void create(int n)
-{   
-    int i;
-    struct friend *p,*q;
-    p=(struct friend*)malloc(LEN);
-    p->num=1;
-    p->next=NULL;
-    head=p;
-    q=p;
-    
-
-
-    for(i=2;i<=n;i++){
-        p=(struct friend*)malloc(LEN);
-        p->num=i;
-        q->next=p;
-        q=p;//q结点指向链表尾部结点
-        p->next=NULL;
-    }
-    //这里用p可以吗
-    tail=q;
-    tail->next=head;
-}
-
-void delete(int m){
-    int flag=0;
-    struct friend *q,*p;
-    q=tail;
-    do{
-        p=q->next;
-        flag++;
-        if(flag%m==0){
-            printf("%d号小盆友退出了\n",q->next->num);
-            q->next=p->next;
-            free(p);
-        }else{
-            q=p;
-        }
-    }while(q!=q->next);
-    head=q;
-    
-    printf("%d号小盆友退出了\n",head->num);
-    free(head);
-}
-
-int main(){
-    int n,m;
-    scanf("%d %d",&n,&m);
-
-    create(n);
-
-    delete(m);
-    
+int main()
+{
+    int t, max, min;
+    double average;
+    List A = (List)malloc(sizeof(Node));
+    A->data = 0;
+    A->next = NULL;
+    Node *p = A;
+    printf("请输入一批正整数：\n");
+    do
+    {
+        scanf("%d", &t);
+        Node *T = (Node *)malloc(sizeof(Node));
+        T->data = t;
+        T->next = NULL;
+        p->next = T;
+        p = p->next;
+        A->data++;
+    } while (getchar() != '\n');
+    calculate(A, &max, &min, &average);
+    printf("最大值为:%d,最小值为:%d,平均值为:%.3lf.\n", max, min, average);
+    destroy(A);
     return 0;
+}
+
+void calculate(List L, int *max, int *min, double *average)
+{
+    *max = *min = L->next->data;
+    *average = 0;
+    double sum = 0;
+    Node *T = L;
+    for (int i = 0; i < L->data; i++)
+    {
+        T = T->next;
+        sum += T->data;
+        if (*max < T->data)
+            *max = T->data;
+        if (*min > T->data)
+            *min = T->data;
+    }
+    *average = sum / L->data;
+}
+void destroy(List L)
+{
+    Node *T = L;
+    Node *p;
+    while (T)
+    {
+        p = T->next;
+        free(T);
+        T = p;
+    }
 }
