@@ -35,8 +35,8 @@ int main(int argc,char **argv){
 
     //4.请求服务器处理数据
     write(confd,argv[1],strlen(argv[1]));
-    len=read(confd,buf,sizeof(buf));
-    write(STDOUT_FILENO,buf,len);
+    //len=read(confd,buf,sizeof(buf));
+    //write(STDOUT_FILENO,buf,len);
 
     //5.关闭socket
     close(confd);
