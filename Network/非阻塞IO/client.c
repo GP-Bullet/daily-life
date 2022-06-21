@@ -38,7 +38,20 @@ int main(int argc, char* argv[]){
         if(ret == -1){
             printf("set O_NONBLOCK failed!,errno=%d\n",errno);
         }
-        char *buf = "hello, I am a client!";
+        char *buf = "hello, I n");
+                    sleep(1);
+                    continue;
+                }
+                else
+                    printf("send error!,errno=%d\n",errno);
+            }
+            else{·
+                printf("server disconnect!\n");
+            }
+        }
+ 
+    }
+ am a client!";
         int cnt = 0;
         while(1){
             ret = send(fd, buf, strlen(buf), 0);
@@ -48,18 +61,5 @@ int main(int argc, char* argv[]){
             }
             else if(ret == -1){
                 if(errno == EAGAIN){
-                    printf("send try again\n");
-                    sleep(1);
-                    continue;
-                }
-                else
-                    printf("send error!,errno=%d\n",errno);
-            }
-            else{
-                printf("server disconnect!\n");
-            }
-        }
- 
-    }
- 
+                    printf("send try again\
 }
