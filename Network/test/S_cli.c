@@ -301,7 +301,7 @@ void perr_exit(const char* s)
 int main() {
   
   // Server 端的监听地址
-  auto msg = InitTestClient("192.168.123.4:1234");
+  auto msg = InitTestClient("127.0.0.1:1234");
   // Put your code Here!
 //192.168.30.144
 //192.168.123.4
@@ -309,7 +309,7 @@ int main() {
   struct sockaddr_in severaddr;
   int confd;
   int len,ret;
-  char ipstr[] = "192.168.123.4";//..
+  char ipstr[] = "127.0.0.1";//..
   char buf[4096];
 
   // 1.创建一个socket
