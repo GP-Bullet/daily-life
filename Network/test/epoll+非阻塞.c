@@ -18,7 +18,7 @@
 #include <grpcpp/support/status_code_enum.h>
 #include <memory>
 #include <mutex>
-#include <string.h>
+#include <string.h> 
 #include <string>
 #include <sys/socket.h>
 #include <thread>
@@ -56,7 +56,7 @@ class NetworkTestServer final : public NetworkTest::NT::Service {
         response->set_reason(Success);
         return Status::OK;
     }
-    void Update() {
+    void Update(){
 
         if (status != Success)
             return;
