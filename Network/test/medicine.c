@@ -64,7 +64,7 @@ void Welcome()  //欢迎菜单
     printf("*   *   *  * * *      *        *  *      *         *  *      * * *\n");
     printf(" * * * *   * *        *      *        *     *    *  *  *     * *\n" );
     printf("  *   *    * * *      * * *    *  *      *      *       *    * * * \n");
-    printf("欢迎来到西邮药店！\n");
+    printf("欢迎来到药店！\n");
     printf("请选择你的身份\n");
     printf("1.消费者         2.管理者\n");
     scanf("%d",&id);

@@ -17,7 +17,7 @@ int main(){
     // 按学号查询 按性别查询 按姓名查询 按宿舍查询  数据结构
     
 }
-void Main_
+
 void Main_Menu9(void) {
 	system("clear");
 	char choice;
