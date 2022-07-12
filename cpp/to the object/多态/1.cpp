@@ -3,10 +3,23 @@
 //父子类型可转换
 
 //地址早绑定 晚绑定
+//虚函数
 #include<iostream>
 
+//动态多态满足条件 
+//1、有继承关系
+//2、子类重写父类的虚函数
+
+//动态多态的使用
+//父类的指针或者引用 指向子类对象
+//Animal &animal =cat
+
+
+
+//*原理
+//指针
 using namespace std;
-//虚函数
+
 class Animal
 {
 public:
@@ -40,6 +53,7 @@ void test01(){
     dospeak(cat);
     dospeak(dog);
 }
+
 
 int main(){
 
