@@ -15,4 +15,7 @@ public:
 
 	//获取职工岗位名称
 	virtual string getDeptName();
+
+    //保存文件
+    void save();
 };
