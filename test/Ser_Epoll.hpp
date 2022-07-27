@@ -4,17 +4,17 @@
 #include<string>
 #include<unistd.h>
 #include <hiredis/hiredis.h> 
-#include<myerror.h>
+#include"myerror.h"
 #include<string.h>
 #include<fcntl.h>
-
+using namespace std;
 #define OPEN_MAX 4096 
 class Epoll
 {
 public:
-    static int Create()
+    int Create()
     {
-        int epfd=epoll_create(4096);
+        epfd=epoll_create(OPEN_MAX);
         if(epfd<0){
             myerror(string("epoll_create"),__FILE__,__LINE__);
         }
@@ -28,13 +28,13 @@ public:
         
         int flag=fcntl(sockfd,F_GETFL,0);
         fcntl(sockfd,F_SETFL,flag | O_NONBLOCK);
-        epoll_ctl(epollfd,EPOLL_CTL_ADD,sockfd,&tep);
+        epoll_ctl(epfd,EPOLL_CTL_ADD,sockfd,&tep);
     }
     int Wait(struct epoll_event *event)
     {
-        int ret=epoll_wait(epollfd,event,OPEN_MAX,-1);
+        int ret=epoll_wait(epfd,event,OPEN_MAX,-1);
         if(ret<0){
-            myerror(string"epoll_wait",__FLIE__,__LINE__);
+            myerror(string("epoll_wait"),__FILE__,__LINE__);
         }
         return ret;
     }
@@ -43,11 +43,11 @@ public:
         struct epoll_event tep;
         tep.data.fd=sockfd;
         tep.events=EPOLLIN;
-        epoll_ctl(epollfd,EPOLL_CTL_DEL,sockfd,&tep);
+        epoll_ctl(epfd,EPOLL_CTL_DEL,sockfd,&tep);
     }
 
 private:
-    int epollfd;
+    int epfd;
 
-}
+};
 

@@ -32,7 +32,7 @@ using namespace std;
 #include<string>
 #include<sys/types.h>
 #include<arpa/inet.h>
-#include<myerror.h>
+#include"myerror.h"
 #include<stdlib.h>
 #include<string.h>
 
@@ -90,30 +90,46 @@ public:
 };
 
 
-int readn(int fd,char*buf,int size)
+int readn(int fd, char *buf, int size)
 {
-  char*pt=buf;
-  int count =size;  
-  while(count>0)
+  char *pt = buf;
+  int count = size;
+  while (count > 0)
   {
-    int len=recv(fd,pt,count,0);
-    if(len==-1)
-    {   
-        if(errno == EINTR || errno==EWOULDBLOCK || errno==EAGAIN)
-        {
-          break;
-        }
-      myerror("recv",__FILE__,__LINE__);
-    }
-    else if(len==0)
+    int len = recv(fd, pt, count, 0);
+    if (len == -1)
     {
-      return size-count;
+      if (errno == EINTR || errno == EWOULDBLOCK)
+        continue;
+      else
+        return -1;
     }
-    pt+=len;
-    count-=len;
+    else if (len == 0)
+    {
+      return size - count;
+    }
+    pt += len;
+    count -= len;
   }
-  return size-count;
+  return size - count;
 }
-
-
-
+int recvMsg(int fd, string &msg)
+  int len = 0;
+  readn(fd, (char *)&len, 4);
+  len = ntohl(len);
+  printf("接收到的 数据块大小 %d\n",len);
+  char *data = (char *)malloc(len + 1);
+  int Len = readn(fd, data, len);
+  if (Len == 0)
+  {
+    printf("对方断开链接\n");
+    close(fd);
+  }
+  else if (len != Len)
+  {
+    printf("数据接收失败\n");
+  }
+  data[len] = '\0';
+  msg = data;
+  return Len;
+}
