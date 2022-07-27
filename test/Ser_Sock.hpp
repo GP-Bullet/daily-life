@@ -114,6 +114,7 @@ int readn(int fd, char *buf, int size)
   return size - count;
 }
 int recvMsg(int fd, string &msg)
+{
   int len = 0;
   readn(fd, (char *)&len, 4);
   len = ntohl(len);
