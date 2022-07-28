@@ -14,7 +14,7 @@ int main(int argc,char **argv){
     struct sockaddr_in severaddr;
     int confd;
     int len;
-    char ipstr[]="192.168.123.4";
+    char ipstr[]="127.0.0.1";
     char buf[MAXLEN];
     if(argc<2){
         printf("./client str\n");

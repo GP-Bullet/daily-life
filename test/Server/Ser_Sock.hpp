@@ -27,12 +27,13 @@
 
 #pragma once
 #include<iostream>
+#include <unistd.h>
 using namespace std;
 #include<sys/socket.h>
 #include<string>
 #include<sys/types.h>
 #include<arpa/inet.h>
-#include"myerror.h"
+#include"myerror.hpp"
 #include<stdlib.h>
 #include<string.h>
 
@@ -48,7 +49,7 @@ public:
         return sockfd;
     }
 
-    static void Bind(char *ip,int sockfd,int port)
+    static void Bind(const char *ip,int sockfd,int port)
     {
       struct sockaddr_in addr;
       memset(&addr,0,sizeof(addr));
@@ -90,7 +91,7 @@ public:
 };
 
 
-int readn(int fd, char *buf, int size)
+inline int readn(int fd, char *buf, int size)
 {
   char *pt = buf;
   int count = size;
@@ -113,7 +114,7 @@ int readn(int fd, char *buf, int size)
   }
   return size - count;
 }
-int recvMsg(int fd, string &msg)
+inline int recvMsg(int fd, string &msg)
 {
   int len = 0;
   readn(fd, (char *)&len, 4);

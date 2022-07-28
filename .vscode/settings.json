@@ -16,6 +16,7 @@
         "stdexcept": "cpp",
         "system_error": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "pp_online.h": "c"
     }
 }
