@@ -5,7 +5,7 @@
 #include"Ser_Epoll.hpp"
 #include"Ser_Sock.hpp"
 #define OPEN_MAX 4096
-
+#include"../include/Allinclude.h"
 
 class Server
 {
@@ -14,7 +14,7 @@ private:
     Epoll *ep;
     int m_listenfd;
     int m_efd;
-    
+    static ChatDataBase *chatdb;
 public:
     Server()
     {
@@ -55,5 +55,5 @@ public:
         }
     }
 
-
+    void Ser_Register(struct epoll_event ep,Json::Value val);
 };

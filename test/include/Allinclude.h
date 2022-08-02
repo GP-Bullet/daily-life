@@ -19,7 +19,12 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
- 
+#include<jsoncpp/json/json.h>
+#include "../Server/redis_handler.h"
+#include"../Server/mysql.h"
+
+
+
 /* 宏定义 */
 #define LOGIN           0    //宏定义登录action
 #define REGIST          1    //宏定义注册action

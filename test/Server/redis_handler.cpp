@@ -26,7 +26,7 @@ RedisHandler::~RedisHandler()
 addr: 地址，port：端口号，pwd：密码
 成功返回M_REDIS_OK，失败返回M_CONNECT_FAIL
 */
-int RedisHandler::connect(const string &addr = "127.0.0.1", int port = 6379, const string &pwd) {
+int RedisHandler::connect(const string &addr = "127.0.0.1", int port = 8000, const string &pwd) {
     m_addr = addr;
     m_port = port;
     m_pwd = pwd;
