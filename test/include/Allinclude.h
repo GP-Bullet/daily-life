@@ -131,7 +131,7 @@ void log_dis2(void);      //登录界面静态
 void reg_dis(void);       //注册界面
 void help_dis(void);      //帮助界面 
 void user_dis(void);      //用户界面
-void clear_min(void);     //请屏小窗口
+void clear_min(void);     //请屏小窗口      
 void loading_dis(void);   //聊天室开机加载动画
 void rem_passwd(void);    //修改密码界面
 void superuser_dis(void); //超级用户界面
