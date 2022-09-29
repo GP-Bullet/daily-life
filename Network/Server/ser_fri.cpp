@@ -301,7 +301,7 @@ void Chat_sb(jjjson::usr user)
         return;
     if (user.mes_fri == "quit")
     {
-        string buf = "quit";
+        string buf = "quit"; 
         db->Get(leveldb::ReadOptions(), user.name, &v);
         j = json::parse(v);
         auto tmp = j.get<jjjson::usr>();

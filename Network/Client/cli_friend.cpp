@@ -94,7 +94,9 @@ void deal_req(jjjson::usr user)
 }
 void Delete_friend(jjjson::usr user)
 {
-  cout << "请输入想删除的用户（按0退出）" << endl;
+    printf(" ____________________________________________________\n");
+    printf("｜^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^｜\n");
+           cout << "|               请输入想删除的用户（按0退出）            |" << endl;
   cin >> user.friendname;
   user.choice = "check_friend";
   json j = user;
@@ -104,11 +106,11 @@ void Delete_friend(jjjson::usr user)
   recvMsg(cfd, &f);
   if (strcmp(f, "0") == 0)
   {
-    cout << "此用户不存在！" << endl;
+          cout << "|                   此用户不存在！                     |" << endl;
   }
   else if (strcmp(f, "3") != 0)
   {
-    cout << "不是好友" << endl;
+        cout << "|                        不是好友                        |" << endl;
   }
   free(f);
   user.choice = "delete_friend";
@@ -120,12 +122,12 @@ void Delete_friend(jjjson::usr user)
   // cout<<"this:: "<<ff<<endl;
   if (strcmp(ff, "1") == 0)
   {
-    cout << "成功删除" << endl;
+            cout << "|                       成功删除                        |" << endl;
     sleep(1);
   }
   else
   {
-    cout << "删除失败！" << endl;
+            cout << "|                       删除失败！                       |" << endl;
     sleep(1);
   }
   free(ff);
@@ -427,7 +429,7 @@ void Chat_sb(jjjson::usr user)
     c = user;
     h = c.dump();
     sendMsg(cfd, h, h.size());
-    cout << "可以开始聊天辣";
+    cout << "可以开始聊天辣"<<endl;
     getchar();
     while (1)
     {
@@ -620,7 +622,7 @@ void Friend(jjjson::usr user)
       // send_file(user);
       // break;
     }
-    if (select == 8)
+    if (select == 6)
     {
       system("clear");
       return;

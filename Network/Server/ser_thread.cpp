@@ -32,7 +32,7 @@ void Disband_group(jjjson::usr user)
         string r;
         t = "mygroup";
         t += *it;
-        db->Get(leveldb::ReadOptions(), t, &v);-=---
+        db->Get(leveldb::ReadOptions(), t, &v);     
         k = json::parse(v);
         auto tt = k.get<jjjson::myGroup>();
         for (auto i = tt.mygroup.begin(); i != tt.mygroup.end(); i++)

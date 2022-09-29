@@ -7,16 +7,15 @@ int cfd;
 #define SIZE 200000
 #define LOGSLEEP 150000
 #define LOGSLEEP2 7000
-//把代码分开
-//把光标移动到框里面输入
-//点赞   表情    短信
 
 
 
 void Build_group(jjjson::usr user)
 {
   char *f;
-  cout << "请输入想要创建的群" << endl;
+    printf("____________________________________________________\n");
+    printf("｜^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^｜\n");
+           cout << "|                 请输入想要创建的群                    |" << endl;
   cin >> user.group;
   user.choice = "build_group";
   json j = user;
@@ -25,11 +24,11 @@ void Build_group(jjjson::usr user)
   recvMsg(cfd, &f);
   if (f[0] == '1')
   {
-    cout << "创建成功" << endl;
+          cout << "|                    创建成功                           |" << endl;
   }
   else
   {
-    cout << "该群已经创建" << endl;
+          cout << "|                  该群已经创建                          |" << endl;
   }
   free(f);
 }
@@ -37,7 +36,9 @@ void Build_group(jjjson::usr user)
 void Join_group(jjjson::usr user)
 {
   char *f;
-  cout << "请输入想加入的群聊" << endl;
+    printf("____________________________________________________\n");
+    printf("｜^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^｜\n");
+          cout << " |                   请输入想加入的群聊                 |" << endl;
   cin >> user.group;
   user.choice = "look_g";
   json j = user;
@@ -46,7 +47,7 @@ void Join_group(jjjson::usr user)
   recvMsg(cfd, &f);
   if (f[0] == '1')
   {
-    cout << "该群不存在" << endl;
+          cout << "|                     该群不存在                       |" << endl;
   }
   else if (f[0] == '0')
   {
@@ -54,15 +55,15 @@ void Join_group(jjjson::usr user)
     j = user;
     s = j.dump();
     sendMsg(cfd, s, s.size());
-    cout << "成功发送请求" << endl;
+    cout << "|                           成功发送请求                    |" << endl;
   }
   else if (f[0] == '3')
   {
-    cout << "已经发送过请求，请勿重复发送！" << endl;
+    cout << "|               已经发送过请求，请勿重复发送！                 |" << endl;
   }
   else if (f[0] == '4')
   {
-    cout << "已经是群成员" << endl;
+    cout << "|                       已经是群成员                          |" << endl;
   }
   free(f);
 }
@@ -98,26 +99,29 @@ void deal_group_req(jjjson::usr user)
     }
     if (flag == 0)
     {
-      cout << "你不是管理员或群主！" << endl;
+      cout << "|                          你不是管理员                            |" << endl;
       return;
     }
 
     for (auto it = g.join_req.begin(); it != g.join_req.end(); it++)
     {
-      cout << "from____________" << *it << endl;
+      cout << "来自 " << *it <<" 的申请"<< endl;
     }
-    printf("     ***********         welcome %s       **********  \n", user.name.c_str());
-    printf("    ***********         1.操作         **********  \n");
-    printf("    ***********         2.退出              *************\n");
+            printf("____________________________________________________\n");
+           printf("｜^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^｜\n");
+    printf("|                       welcome %s                      |\n", user.name.c_str());
+    printf("|              1.管理           2.退回                   |\n");
     int select;
     cin >> select;
     switch (select)
     {
     case 1:
-      cout << "请选择操作对象" << endl;
+      printf("____________________________________________________\n");
+      printf("｜^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^｜\n");
+              cout << "|                   请选择操作对象                    |" << endl;
       string s;
       cin >> s;
-      printf("    ***********  1.同意     2.拒绝      3.取消         **********  \n");
+      printf("                1.同意     2.拒绝      3.取消                     \n");
       int x;
       cin >> x;
       if (x == 1)
@@ -154,14 +158,14 @@ void check_member(jjjson::usr user)
   free(buf);
   j = json::parse(t);
   auto tmp = j.get<jjjson::Group>();
-  cout << "***********" << user.group << "************" << endl;
-  cout << "*******成员*******"
-       << "***身份****" << endl;
-  cout << "*******" << tmp.owner << "**********owner****" << endl;
+  cout << "          " << user.group << "            " << endl;
+  cout << "      成员      *"
+       << "  身份    " << endl;
+  cout << "      " << tmp.owner << "         群主   " << endl;
   for (auto it = tmp.manager.begin(); it != tmp.manager.end(); it++)
   {
     if (*it != tmp.owner)
-      cout << "*******" << *it << "**********manager****" << endl;
+      cout << "      " << *it << "          管理员    " << endl;
   }
   for (auto it = tmp.member.begin(); it != tmp.member.end(); it++)
   {
@@ -181,7 +185,7 @@ void check_member(jjjson::usr user)
     }
     if (flag == 0)
       continue;
-    cout << "*******" << *it << "**********member****" << endl;
+    cout << "      " << *it << "          群成员    " << endl;
   }
 }
 
@@ -206,13 +210,15 @@ void set_manager(jjjson::usr user)
   while (1)
   {
     char *ff;
-    cout << "******1.添加管理员        2.取消管理员        3.退出******" << endl;
+    cout << "|      1.添加管理员        2.取消管理员        3.退出      |" << endl;
     string select;
     cin >> select;
     if (select == "1")
     {
       string tmpname = user.name;
-      cout << "请输入想要添加的管理员" << endl;
+          printf("____________________________________________________\n");
+        printf("｜^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ｜\n");
+              cout << " |                请输入想要添加的管理员                   |" << endl;
       cin >> user.name;
       user.friendname = user.name;
       user.choice = "look_g";
@@ -223,13 +229,13 @@ void set_manager(jjjson::usr user)
       user.name = tmpname;
       if (ff[0] != '4' && ff[0] != '5' && ff[0] != '6')
       {
-        cout << "不是群成员" << endl;
+              cout << "|                       不是群成员                     |" << endl;
         free(ff);
         return;
       }
       if (ff[0] == '5' || ff[0] == '6')
       {
-        cout << "已是管理员" << endl;
+        cout << "|               已是管理员                   |" << endl;
         free(ff);
         return;
       }
@@ -240,7 +246,9 @@ void set_manager(jjjson::usr user)
     {
       char *fff;
       string tmpname = user.name;
-      cout << "请输入想要撤销的管理员" << endl;
+          printf("____________________________________________________\n");
+          printf("｜^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^｜\n");
+                cout << " |                   请输入想要撤销的管理员              |" << endl;
       cin >> user.name;
       user.friendname = user.name;
       user.choice = "look_g";
@@ -251,13 +259,13 @@ void set_manager(jjjson::usr user)
       user.name = tmpname;
       if (fff[0] != '4' && fff[0] != '5' && fff[0] != '6')
       {
-        cout << "不是群成员" << endl;
+                cout << "|                    不是群成员                         |" << endl;
         free(fff);
         return;
       }
       if ((fff[0] != '5') && (fff[0] != '6'))
       {
-        cout << "不是管理员" << endl;
+        cout << "|             不是管理员                               |" << endl;
         free(fff);
         return;
       }
@@ -292,7 +300,7 @@ void kick_sb(jjjson::usr user)
   recvMsg(cfd, &f);
   if (f[0] != '6' && f[0] != '5')
   {
-    cout << "不是管理员，无权操作" << endl;
+    cout << "不是管理员" << endl;
     free(f);
     return;
   }
@@ -301,14 +309,16 @@ void kick_sb(jjjson::usr user)
   {
     check_member(user);
 
-    cout << "*****1.踢人       2.退出*****" << endl;
+    cout << "|              1.踢人       2.退出                   |" << endl;
     string select;
     cin >> select;
     if (select == "1")
     {
       char *ff;
       string tmpname = user.name;
-      cout << "请输入想要踢的人" << endl;
+          printf("____________________________________________________\n");
+          printf("｜^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^｜\n");
+                cout << "|                    请输入想要踢的人                   |" << endl;
       cin >> user.name;
       user.friendname = user.name;
       user.choice = "look_g";
@@ -319,13 +329,14 @@ void kick_sb(jjjson::usr user)
       user.name = tmpname;
       if (ff[0] != '4' && ff[0] != '5' && ff[0] != '6')
       {
-        cout << "不是群成员" << endl;
+              cout << "|                   不是群成员                           |" << endl;
         free(ff);
         return;
       }
       if (ff[0] == '5' || ff[0] == '6')
       {
-        cout << "是管理员，无法踢人" << endl;
+              cout << "|                    无法踢人                             |" << endl;
+              sleep(1);
         free(ff);
         return;
       }
@@ -344,8 +355,10 @@ void kick_sb(jjjson::usr user)
 
 void withdraw_group(jjjson::usr user)
 {
-  cout << "请确认你要退出群：" << user.group << endl;
-  cout << "*****1.确认       *****2.取消****" << endl;
+      printf("____________________________________________________\n");
+    printf("｜^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^｜\n");
+          cout << "|              是否退群" << user.group <<"             |"<< endl;
+          cout << "|                1.是           2.否                  |" << endl;
   string select;
   cin >> select;
   if (select == "1")
@@ -392,7 +405,7 @@ void *recv_chat_group(jjjson::usr arg)
       for (auto it = q.unread_mes.begin(); it != q.unread_mes.end(); it++)
       {
         printf("%50c", ' ');
-        cout << LIGHT_RED << *it << endl;
+        cout  << *it << endl;
         printf("%40c", ' ');
         cout << ctime(&q.unread_t[0]) << NONE << endl;
         q.unread_t.erase(q.unread_t.begin());
@@ -428,12 +441,13 @@ void Check__group_history(jjjson::usr user)
 
 void chat_group(jjjson::usr user)
 {
-
-  cout << "1.开始聊天" << endl;
-  cout << "2.查看聊天记录" << endl;
+    printf("____________________________________________________\n");
+    printf("｜^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^｜\n");
+          cout << " |                     1.聊天                        |" << endl;
+          cout << " |                   2.查看聊天记录                    |" << endl;
   // cout<<"3.传文件"<<endl;
   // cout<<"4.收文件"<<endl;
-  cout << "3.输入其他键退出" << endl;
+          cout << " |                    3.退回                         |" << endl;
   string select;
   cin >> select;
   if (select == "1")
@@ -450,13 +464,13 @@ void chat_group(jjjson::usr user)
     json j = user;
     l = j.dump();
     sendMsg(cfd, l, l.size());
-     cout << "开始聊天吧！";
+     cout << "         |            开始聊天                     |"<<endl;
     getchar();
     while (1)
     {
       string m;
       string s;
-      s = "from:" + user.name + ":";
+      s =   user.name + "说:";
       user.choice = "chat_group";
       getline(cin,m);
       s += m;
@@ -473,7 +487,7 @@ void chat_group(jjjson::usr user)
         sendMsg(cfd, l, l.size());
         break;
       }
-      cout << LIGHT_BLUE << user.name << " :" << s << endl;
+      cout  << user.name << " :" << s << endl;
       cout << ctime(&t) << NONE << endl;
       json j = user;
       string l = j.dump();
@@ -492,7 +506,9 @@ void send_file_gro(jjjson::usr user)
   while(1)
   {
   char path[1000], name[100];
-  cout << "请输入文件地址(输入0退出)" << endl;
+    printf("____________________________________________________\n");
+   printf("｜^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^｜\n");
+        cout << "|              请输入文件地址(输入0退出)                  |" << endl;
   cin >> path;
   if(strcmp(path,"0")==0)
   {
@@ -515,7 +531,7 @@ void send_file_gro(jjjson::usr user)
   int fd;
   if ((fd = open(path, O_RDONLY)) < 0)
   {
-    cout << "open error" << endl;
+    cout << "|                open 时出错             |" << endl;
     return;
   }
   json j;
@@ -524,7 +540,7 @@ void send_file_gro(jjjson::usr user)
   user.choice = "recv_file_gro";
   struct stat st;
   stat(path, &st);
-  user.id = st.st_size;
+  user.id  = st.st_size;
   j = user;
   s = j.dump();
   sendMsg(cfd, s, s.size());
@@ -553,7 +569,6 @@ void send_file_gro(jjjson::usr user)
       break;
     }
   }
-
   close(fd);
   }
 }
@@ -579,9 +594,11 @@ void recv_file_gro(jjjson::usr user)
     auto x = j.get<jjjson::Gro_chat>();
     for (auto it = x.filename.begin(); it != x.filename.end(); it++)
     {
-      cout << "*******" << *it << endl;
+      cout << "      " << *it << endl;
     }
-    cout << "请选择操作对象(输入0退出)" << endl;
+    printf("____________________________________________________\n");
+   printf("｜^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^｜\n");
+          cout << "|            请选择操作对象(输入0退出)                  | " << endl;
     string q;
     cin >> q;
     if (q == "0")
@@ -595,10 +612,10 @@ void recv_file_gro(jjjson::usr user)
     }
     if (flag == 0)
     {
-      cout << "请选择正确的对象" << endl;
+      cout << "|                 请选择正确的对象                  |" << endl;
       continue;
     }
-    cout << "请选择保存路径" << endl;
+    cout << "|                     请选择保存路径                    |" << endl;
     string path;
     cin >> path;
     path += "/";
@@ -606,7 +623,7 @@ void recv_file_gro(jjjson::usr user)
     cout << path << endl;
     if ((fd = open(path.c_str(), O_WRONLY | O_CREAT | O_APPEND, 0666)) < 0)
     {
-      cout << "create file error" << endl;
+      cout << "|                 create file error                        " << endl;
       continue;
     }
     long long size = 0;
@@ -652,8 +669,11 @@ void recv_file_gro(jjjson::usr user)
 
 void Enter_group(jjjson::usr user)
 {
+
   char *f;
-  cout << "请输入进入的群聊（0退出）" << endl;
+  printf("____________________________________________________\n");
+  printf("｜^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^｜\n");
+        cout << "|             请输入进入的群聊（0退出）                  |" << endl;
   cin >> user.group;
   if (user.group == "0")
     return;
@@ -665,17 +685,18 @@ void Enter_group(jjjson::usr user)
  
   if (f[0] == '1')
   {
-    cout << "该群不存在" << endl;
+    cout << "|                 该群不存在                    |" << endl;
     free(f);
     return;
   }
   else if (f[0] != '4' && f[0] != '6' && f[0] != '5')
   {
-    cout << "你不是该群成员" << endl;
+    cout << "|                    你不是该群成员                   |" << endl;
     free(f);
     return;
   }
   free(f);
+  system("clear");
   while (1)
   {
     // Inform(user);
@@ -744,7 +765,9 @@ void Enter_group(jjjson::usr user)
 void disband_group(jjjson::usr user)
 {
   char *f;
-  cout << "请输入解散的群聊" << endl;
+      printf("____________________________________________________\n");
+    printf("｜^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^｜\n");
+          cout << " |                     请输入解散的群聊                 |" << endl;
   cin >> user.group;
   user.choice = "look_g";
   json j = user;
@@ -753,18 +776,18 @@ void disband_group(jjjson::usr user)
   recvMsg(cfd, &f);
   if (f[0] == '1')
   {
-    cout << "该群不存在" << endl;
+          cout << "|                       该群不存在                    |" << endl;
     free(f);
     return;
   }
   else if (f[0] != '6')
   {
-    cout << "你不是该群群主" << endl;
+          cout << " |                        你不是群主                    |" << endl;
     free(f);
     return;
   }
   free(f);
-  cout << "*****1.确认     2.取消*****" << endl;
+        cout << "  |                    1.确认     2.取消               |" << endl;
   string a;
   cin >> a;
   if (a != "1")
@@ -797,21 +820,23 @@ void Group(jjjson::usr user)
     free(buf);
     j = json::parse(t);
     auto tmp = j.get<jjjson::myGroup>();
-    cout << "*********群名       ********身份********" << endl;
+        printf("____________________________________________________\n");
+    printf("｜^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^｜\n");
+    cout << "|        群名               身份        |" << endl;
     for (auto it = tmp.mygroup.begin(); it != tmp.mygroup.end(); it++)
     {
       cout << "        " << *it << "              ";
       if (tmp.status[*it] == 1)
       {
-        cout << "owner" << endl;
+        cout << "群主" << endl;
       }
       else if (tmp.status[*it] == 2)
       {
-        cout << "manager" << endl;
+        cout << "管理员" << endl;
       }
       else if (tmp.status[*it] == 3)
       {
-        cout << "member" << endl;
+        cout << "成员" << endl;
       }
     }
     printf("\033[2;12H ____________________________________________________\n");

@@ -182,11 +182,11 @@ void settings(jjjson::usr user)
         cout << "修改成功！" << endl;
         sleep(1);
       }
-      else
-      {
-        cout << "修改失败！" << endl;
-        sleep(1);
-      }
+      // else
+      // {
+      //   cout << "修改失败！" << endl;
+      //   sleep(1);
+      // }
       break;
     }
   }
