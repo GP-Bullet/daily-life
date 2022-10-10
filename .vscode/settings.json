@@ -17,6 +17,7 @@
         "system_error": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "pp_online.h": "c"
+        "pp_online.h": "c",
+        "9.C": "cpp"
     }
 }
