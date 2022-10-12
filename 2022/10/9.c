@@ -184,30 +184,3 @@ void CreateMaze(int **maze, int x, int y) {
     }
 }
 
-#include<stdio.h>
-#include<stdlib.h>
-//迷宫问题
-#define M 8
-#define N 8
-
-typedef struct
-{
-    int i;
-    int j;
-    int di;
-}Box;
-
-typedef struct
-{
-    Box data[100000];
-    int top;
-}stType;
-
-void InitStack(stType *&st)
-{
-    st=(stType *)malloc()
-
-}
-int main(){
-
-}
