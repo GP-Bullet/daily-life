@@ -1,9 +1,9 @@
 #include<stdio.h>
+void test(int *b){
+    printf("%d",b[0]);
+}
 int main(){
-    int *b=(int *)2;
-    int *a=b;
-    printf("%d\n",a+3);
-    printf("%d\n",a);
-    printf("%d\n",a+1);
-
+    int a[2]={1,2};
+    test(a);
+    return 0;
 }
