@@ -27,7 +27,6 @@ int main(){
             count %= (int)pow(2,64);
 
         }
-
         printf("%lld\n",count);
         }else{
             return 0;
