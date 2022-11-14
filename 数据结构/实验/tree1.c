@@ -142,9 +142,6 @@ int PostTreeDepth(BiTree bt)
     else return(0);
 }
 
-
-
-
 int main(){
     BiTree bt;
     CreateBiTree(&bt);
@@ -157,7 +154,111 @@ int main(){
     printf("\n");
     printf("中序递归：");
     InOrder(bt);
-    // printf("后序非递归：");
-    // PostOreder(bt);
+     printf("后序非递归：");
+     PostOreder(bt);
     return 0;
 }
+// 结点类型定义
+typedef struct{
+	int weight;
+	int parent,lch,rch;
+}HTNode,*HuffmanTree;
+ 
+// 找出森林中权值最小的两个
+void Select(HuffmanTree HT,int n,int &s1,int &s2) {
+	int minum;
+	int i;
+	for(i=1;i<=n;i++){
+		if(HT[i].parent == 0){
+			minum = i;
+			break;
+		}
+	}
+	for(i = 1;i<=n;i++){
+		if(HT[i].parent == 0){
+			if(HT[i].weight<HT[minum].weight){
+				minum = i;
+			}
+		}
+	}
+	s1 = minum;
+	for(i=1;i<=n;i++){
+		if(HT[i].parent == 0&& i!=s1){
+			minum = i;
+			break;
+		}
+	}
+	for(i = 1;i<=n;i++){
+		if(HT[i].parent == 0&& i!=s1){
+			if(HT[minum].weight<HT[minum].weight){
+				minum = i;
+			}
+		}
+	}
+	s2 = minum;
+}
+ 
+// 建立哈夫曼树 
+void CreatHuffmanTree(HuffmanTree HT,int n){
+	int m,i,s1,s2;
+	if(n<=1){
+		return ;
+	}
+	m = 2*n-1;			// 数组共2n-1个元素
+	HT = new HTNode[m+1];	// 0号单元未用，HT[m]表示根节点 
+	for(i=1;i<=m;i++){		// 将2n-1个元素的lch,rch,parent设置为0 
+		HT[i].lch = 0;
+		HT[i].rch = 0;
+		HT[i].parent = 0;
+	} 
+	for(i = 1;i<=n;i++){	// 输入前n个元素的weight值 
+		scanf("%d",HT[i].weight);
+	}
+	// 初始化结束，下面开始建立哈夫曼树 
+	for(i=n+1;i<=m;i++){
+		Select(HT,i-1,s1,s2);
+		HT[s1].parent = i;
+		HT[s2].parent = i;
+		HT[i].lch = s1;
+		HT[i].rch = s2;
+		HT[i].weight = HT[s1].weight+HT[s2].weight;
+	} 
+} 
+
+//存放哈夫曼编码
+typedef char** HuffmanCode;
+ 
+// 结点类型定义
+typedef struct{
+	int weight;
+	int parent,lch,rch;
+}HTNode,*HuffmanTree; 
+ 
+// 哈夫曼编码 
+void  CreatHuffmanCode(HuffmanTree HT,HuffmanCode &HC,int n){
+	HC = new char*[n+1];
+	char *cd = new char[n];
+	cd[n-1] = '\0';
+	int start,c,f,i;
+	for(i=1;i<=n;i++){
+		start = n-1;
+		c = i;
+		f = HT[i].parent;
+		while(f!=0){
+			start--;
+			if(HT[f].lch == c){
+				cd[start] = '0';
+			}else{
+				cd[start] = '1';
+			}
+			c = f;
+			f = HT[f].parent;
+		}
+		HC[i] = new char[n-start];
+		strcpy(HC[i],&cd[start]);
+	}
+	delete cd;		// 释放临时空间 
+}
+
+
+
