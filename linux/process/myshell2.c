@@ -313,7 +313,7 @@ int command_Redirect(int left,int right){
     if(!isCommand(commands[left])){
         return ERROR_COMMAND;
     }
-    //判断重定向
+    //判断重定fd
 
     int inNum=0,outNum=0;
     char *inFile=NULL,*outFile=NULL;
@@ -338,7 +338,6 @@ int command_Redirect(int left,int right){
             if(endFlg==right)endFlg=i;
         }
     }
-
     //处理重定向
 
 //?文件的一些函数用什么比较好

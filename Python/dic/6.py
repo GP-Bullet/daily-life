@@ -1,0 +1,8 @@
+s1=eval(input())
+s2=eval(input())
+l1=list(s1)
+l2=list(s2)
+l1=sorted(l1)
+l2=sorted(l2)
+d1=dict(zip(l1,l2))
+print(d1)
