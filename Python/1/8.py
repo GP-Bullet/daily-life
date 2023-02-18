@@ -3,7 +3,7 @@ b=input()
 c=input()
 print("%.2f"%a)
 print("%e %E %.2%"%(a,a,a))
-
+#练习
 print(format(b,"2") "%0x"%b)
 
 
