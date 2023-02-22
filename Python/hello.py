@@ -1,1 +1,1 @@
-print(5/3)
+s=input();print(len(s))

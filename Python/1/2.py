@@ -1,5 +1,5 @@
 import math
 
 r=eval(input())
-s=math.pi*r
-print("L=%.2f"%s)
+s=r*math.pi*r
+print("圆面积是%.2f"%s)
