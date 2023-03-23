@@ -2,6 +2,11 @@ import requests
 import os
 import re
 
+# 去重
+# 取消代理
+# 修改重命名
+# 修改安装路径
+
 def download_images(keyword, pages):
     # 创建一个文件夹来存放图片
     path = "./" + keyword
