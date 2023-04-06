@@ -28,7 +28,7 @@ class ImageSpider(object):
         print(img_link_list)
 
         # 创建目录，用于保存图片
-        directory = '/home/gp-bullet/Desktop/weixing/weixing'.format(word)
+        directory = '/home/biu/Desktop/weixing/weixing'.format(word)
         # 如果目录不存在则创建新目录
         if not os.path.exists(directory):
             os.makedirs(directory)
@@ -38,7 +38,7 @@ class ImageSpider(object):
             self.save_image(img_link,filename)
             self.i += 1
             # 每页只能下载60张图片，这里可以直接跳出，或者按需要的数量更改
-            if self.i == 4000:
+            if self.i == 2500:
                  print(self.i)
                  return
             # 也可以改成翻页下载的形式：
