@@ -30,4 +30,4 @@ def crawl_baidu_images(keyword, path, num):
                 print("下载失败：" + pic_url)
 
 # 调用函数，输入关键词、路径和数量（必须是20的倍数）
-crawl_baidu_images("卫星", "/home/gp-bullet/Desktop/weixing2/weixing2", 4000)
+crawl_baidu_images("宇宙陨石", "/home/biu/Desktop/weixing", 1000)
