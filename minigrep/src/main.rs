@@ -9,20 +9,20 @@ impl ProcessBasicInfo {
         }
     }
 
-    pub fn get_path(&self) -> String {
+    pub fn path(&self) -> String {
         self.cwd.clone()
     }
 
-    pub fn append_to_path(&mut self, additional: &str) {
-        self.cwd.push_str(additional);
-    }
+    pub fn set_path(&mut self, path: String) {
+        self.cwd = path;
+    } 
 }
 
 fn normalize_path(proc: &mut ProcessBasicInfo, path: &str) {
     if path.len() > 0 {
         let cwd = match path.as_bytes()[0] {
             b'/' => String::from("/"),
-            _ => proc.cwd.clone(),
+            _ => proc.path(),
         };
         let mut cwd_vec: Vec<_> = cwd.split("/").filter(|&x| x != "").collect();
         let path_split = path.split("/").filter(|&x| x != "");
@@ -30,18 +30,20 @@ fn normalize_path(proc: &mut ProcessBasicInfo, path: &str) {
             if seg == ".." {
                 cwd_vec.pop();
             } else if seg == "." {
-                // nothing to do here.
+                // 当前目录
             } else {
                 cwd_vec.push(seg);
             }
         }
-        proc.get_path() = String::from("");
+        proc.set_path(String::from(""));
+        let mut new_path=String::from("");
         for seg in cwd_vec {
-            proc.append_to_path("/");
-            proc.append_to_path(seg);
+            new_path.push_str("/");
+            new_path.push_str(seg);
         }
-        if proc.cwde == "" {
-            proc.cwd = String::from("/");
+        proc.set_path(String::from(new_path));
+        if proc.path() == "" {
+            proc.set_path(String::from("/"));
         }
     }
 }
@@ -49,8 +51,8 @@ fn normalize_path(proc: &mut ProcessBasicInfo, path: &str) {
 fn main() {
     let mut proc = ProcessBasicInfo::new();
     let path = "/usr/local/../bin/./program";
-
+    println!("path: {}", proc.path());
     normalize_path(&mut proc, path);
 
-    println!("Normalized path: {}", proc.get_path());
+    println!("Normalized path: {}", proc.path());
 }
