@@ -50,7 +50,7 @@ fn normalize_path(proc: &mut ProcessBasicInfo, path: &str) {
 
 fn main() {
     let mut proc = ProcessBasicInfo::new();
-    let path = "/usr/local/../bin/./program";
+    let path = "/usr/local/bin/program";
     println!("path: {}", proc.path());
     normalize_path(&mut proc, path);
 
