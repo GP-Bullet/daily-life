@@ -12,7 +12,8 @@ struct strbuf{
 
 __ssize_t strbuf_read(struct strbuf *sb, int fd, size_t hint);
 __ssize_t strbuf_read_file(struct strbuf *sb, const char *path, size_t hint);
-int strbuf_getline(struct strbuf *sb, FILE *fp);         
+int strbuf_getline(struct 
+zstrbuf *sb, FILE *fp);         
 
 
 

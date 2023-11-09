@@ -19,6 +19,7 @@
         "variant": "cpp",
         "pp_online.h": "c",
         "9.C": "cpp",
-        "stack.h": "c"
+        "stack.h": "c",
+        "cstdlib": "c"
     }
 }
